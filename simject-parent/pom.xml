@@ -34,7 +34,8 @@
 	<repositories>
 		<repository>
 			<id>java.net</id>
-			<url>https://maven-repository.dev.java.net/nonav/repository</url>
+			<url>https://maven-repository.dev.java.net/nonav/repository
+			</url>
 			<layout>legacy</layout>
 		</repository>
 	</repositories>
@@ -46,4 +47,19 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.4</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
