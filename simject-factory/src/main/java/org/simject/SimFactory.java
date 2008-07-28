@@ -81,12 +81,12 @@ public class SimFactory {
 		Class clazz = Class.forName(className);
 
 		Object obj = null;
-		if (resource.getRealizedby() == null
-				|| resource.getRealizedby().equals("")) {
+		if (resource.getTarget() == null
+				|| resource.getTarget().equals("")) {
 			obj = createInstance(clazz);
 		}
 		else {
-			String realizedby = resource.getRealizedby();
+			String realizedby = resource.getTarget();
 			Class realizedbyClazz = Class.forName(realizedby);
 			obj = createInstance(realizedbyClazz);
 		}
