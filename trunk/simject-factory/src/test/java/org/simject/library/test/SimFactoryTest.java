@@ -2,8 +2,7 @@ package org.simject.library.test;
 
 import static org.junit.Assert.*;
 
-import java.util.logging.Logger;
-
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.simject.SimFactory;
 import org.simject.library.test.dummy.TestClass;
@@ -14,8 +13,8 @@ import org.simject.library.test.dummy.TestNotFoundInterface;
 public class SimFactoryTest {
 
 	private static final String RESOURCES_XML = "resources.xml";
-	private final static Logger logger = Logger.getLogger(SimFactoryTest.class
-			.getName());
+
+	private static final Logger logger = Logger.getLogger(SimFactoryTest.class);
 
 	@Test
 	public void testSimFactory() throws Exception {
@@ -60,8 +59,9 @@ public class SimFactoryTest {
 	public void testDependencyInjection() throws Exception {
 
 		SimFactory factory = new SimFactory(RESOURCES_XML);
-		TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory.getResource(TestInterface.class);
-		
+		TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory
+				.getResource(TestInterface.class);
+
 		assertNotNull(testInterfaceImpl);
 	}
 }

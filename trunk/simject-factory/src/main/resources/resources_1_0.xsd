@@ -9,14 +9,6 @@
       @(#)resources_1_0.xsd  1.0  Jul 28 2008
     </xsd:documentation>
 	</xsd:annotation>
-	<xsd:annotation>
-		<xsd:documentation>
-	    </xsd:documentation>
-	</xsd:annotation>
-	<xsd:annotation>
-		<xsd:documentation>
-		></xsd:documentation>
-	</xsd:annotation>
 	<xsd:element name="resources">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -33,8 +25,17 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:complexType name="resource">
+		<xsd:sequence>
+				<xsd:element name="property" minOccurs="1" maxOccurs="unbounded"
+					type="resources:property" />
+		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="optional"></xsd:attribute>
 		<xsd:attribute name="type" type="xsd:string" use="required"></xsd:attribute>
 		<xsd:attribute name="target" type="xsd:string" use="optional"></xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="property">
+		<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="value" type="xsd:string"></xsd:attribute>
 	</xsd:complexType>
 </xsd:schema>
