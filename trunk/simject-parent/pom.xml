@@ -20,7 +20,7 @@
 		</plugins>
 	</build>
 	<modules>
-		<module>../simject-library</module>
+		<module>../simject-factory</module>
 		<module>../simject-demo</module>
 	</modules>
 	<dependencies>
