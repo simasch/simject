@@ -6,21 +6,23 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.log4j.Logger;
 import org.simject.exception.SimConfigException;
 import org.simject.exception.SimResourceNotFoundException;
+import org.simject.jaxb.Property;
 import org.simject.jaxb.Resource;
 import org.simject.jaxb.Resources;
 
 public class SimFactory {
 
-	private final static Logger logger = Logger.getLogger(SimFactory.class
-			.getName());
+	private static final Logger logger = Logger.getLogger(SimFactory.class);
 
 	private final static String DEFAULT_DIRECTORY = "META-INF/";
 
@@ -42,7 +44,7 @@ public class SimFactory {
 		if (obj == null) {
 			String message = "Resource of type " + clazz.getName()
 					+ " not found";
-			logger.severe(message);
+			logger.fatal(message);
 			throw new SimResourceNotFoundException(message);
 		}
 		return (T) obj;
@@ -68,7 +70,7 @@ public class SimFactory {
 			}
 		}
 		catch (Exception e) {
-			logger.log(Level.SEVERE, e.getMessage(), e);
+			logger.fatal(e);
 			throw new SimConfigException(e.getMessage(), e);
 		}
 	}
@@ -81,14 +83,25 @@ public class SimFactory {
 		Class clazz = Class.forName(className);
 
 		Object obj = null;
-		if (resource.getTarget() == null
-				|| resource.getTarget().equals("")) {
-			obj = createInstance(clazz);
+		if (resource.getType().equals(EntityManager.class.getName())) {
+			// special treatment for EntityManager
+			Map<String, String> props = new HashMap<String, String>();
+			for (Property property : resource.getProperty()) {
+				props.put(property.getName(), property.getValue());
+			}
+			EntityManagerFactory emf = Persistence.createEntityManagerFactory(
+					resource.getName(), props);
+			obj = emf.createEntityManager();
 		}
 		else {
-			String realizedby = resource.getTarget();
-			Class realizedbyClazz = Class.forName(realizedby);
-			obj = createInstance(realizedbyClazz);
+			if (resource.getTarget() == null || resource.getTarget().equals("")) {
+				obj = createInstance(clazz);
+			}
+			else {
+				String realizedby = resource.getTarget();
+				Class realizedbyClazz = Class.forName(realizedby);
+				obj = createInstance(realizedbyClazz);
+			}
 		}
 		this.resourceMap.put(clazz, obj);
 
@@ -124,7 +137,7 @@ public class SimFactory {
 			}
 		}
 		catch (Exception e) {
-			logger.log(Level.SEVERE, e.getMessage(), e);
+			logger.fatal(e);
 			throw new SimConfigException(e.getMessage(), e);
 		}
 	}
