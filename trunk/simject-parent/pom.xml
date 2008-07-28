@@ -23,6 +23,13 @@
 		<module>../simject-factory</module>
 		<module>../simject-demo</module>
 	</modules>
+	<repositories>
+		<repository>
+			<id>java.net</id>
+			<url>https://maven-repository.dev.java.net/nonav/repository</url>
+			<layout>legacy</layout>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
