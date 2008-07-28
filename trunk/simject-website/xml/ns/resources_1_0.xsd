@@ -21,18 +21,18 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="resource" minOccurs="1" maxOccurs="unbounded"
-					type="resources:resourceType" />
+					type="resources:resource" />
 			</xsd:sequence>
-			<xsd:attribute name="version" type="resources:versionType"
+			<xsd:attribute name="version" type="resources:version"
 				fixed="1.0" use="required" />
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:simpleType name="versionType">
+	<xsd:simpleType name="version">
 		<xsd:restriction base="xsd:token">
 			<xsd:pattern value="[0-9]+(\.[0-9]+)*" />
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:complexType name="resourceType">
+	<xsd:complexType name="resource">
 		<xsd:attribute name="name" type="xsd:string" use="optional"></xsd:attribute>
 		<xsd:attribute name="type" type="xsd:string" use="required"></xsd:attribute>
 		<xsd:attribute name="realizedby" type="xsd:string" use="optional"></xsd:attribute>
