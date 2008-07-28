@@ -2,6 +2,8 @@ package org.simject;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,6 +33,8 @@ public class SimFactory {
 		this.name = name;
 
 		this.loadXmlConfig();
+
+		this.injectDependencies();
 	}
 
 	public <T> T getResource(Class<T> clazz) {
@@ -66,7 +70,6 @@ public class SimFactory {
 			logger.log(Level.SEVERE, e.getMessage(), e);
 			throw new SimConfigException(e.getMessage(), e);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -99,5 +102,29 @@ public class SimFactory {
 		}
 		Object obj = clazz.newInstance();
 		return obj;
+	}
+
+	private void injectDependencies() {
+		try {
+			for (Object obj : this.resourceMap.values()) {
+				Field[] fields = obj.getClass().getDeclaredFields();
+				for (Field field : fields) {
+					Annotation[] annotations = field.getDeclaredAnnotations();
+					for (Annotation annotation : annotations) {
+						if (annotation.annotationType().equals(
+								javax.annotation.Resource.class)) {
+							Class clazz = field.getType();
+							Object value = this.resourceMap.get(clazz);
+							field.setAccessible(true);
+							field.set(obj, value);
+						}
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
+			throw new SimConfigException(e.getMessage(), e);
+		}
 	}
 }

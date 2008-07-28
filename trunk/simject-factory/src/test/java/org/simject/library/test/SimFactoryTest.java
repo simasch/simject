@@ -2,11 +2,12 @@ package org.simject.library.test;
 
 import java.util.logging.Logger;
 
-import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.simject.SimFactory;
 import org.simject.library.test.dummy.TestClass;
 import org.simject.library.test.dummy.TestInterface;
+import org.simject.library.test.dummy.TestInterfaceImpl;
 import org.simject.library.test.dummy.TestNotFoundInterface;
 
 public class SimFactoryTest {
@@ -22,7 +23,7 @@ public class SimFactoryTest {
 
 		logger.info(testClass.toString());
 
-		Assert.assertNotNull(testClass);
+		assertNotNull(testClass);
 	}
 
 	@Test
@@ -33,7 +34,7 @@ public class SimFactoryTest {
 
 		logger.info(testInterface.toString());
 
-		Assert.assertNotNull(testInterface);
+		assertNotNull(testInterface);
 	}
 
 	@Test
@@ -44,13 +45,21 @@ public class SimFactoryTest {
 			TestNotFoundInterface testNotFoundInterface = factory
 					.getResource(TestNotFoundInterface.class);
 
-			Assert.fail();
+			fail();
 		}
 		catch (Exception e) {
-			Assert
-					.assertEquals(
-							"Resource of type org.simject.library.test.dummy.TestNotFoundInterface not found",
-							e.getMessage());
+			assertEquals(
+					"Resource of type org.simject.library.test.dummy.TestNotFoundInterface not found",
+					e.getMessage());
 		}
+	}
+
+	@Test
+	public void testDependencyInjection() throws Exception {
+
+		SimFactory factory = new SimFactory("test");
+		TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory.getResource(TestInterface.class);
+		
+		assertNotNull(testInterfaceImpl);
 	}
 }
