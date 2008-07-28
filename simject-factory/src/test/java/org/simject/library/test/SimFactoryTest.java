@@ -1,8 +1,9 @@
 package org.simject.library.test;
 
+import static org.junit.Assert.*;
+
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.simject.SimFactory;
 import org.simject.library.test.dummy.TestClass;
@@ -12,13 +13,14 @@ import org.simject.library.test.dummy.TestNotFoundInterface;
 
 public class SimFactoryTest {
 
+	private static final String RESOURCES_XML = "resources.xml";
 	private final static Logger logger = Logger.getLogger(SimFactoryTest.class
 			.getName());
 
 	@Test
 	public void testSimFactory() throws Exception {
 
-		SimFactory factory = new SimFactory("test");
+		SimFactory factory = new SimFactory(RESOURCES_XML);
 		TestClass testClass = factory.getResource(TestClass.class);
 
 		logger.info(testClass.toString());
@@ -29,7 +31,7 @@ public class SimFactoryTest {
 	@Test
 	public void testSimFactoryWithInterface() throws Exception {
 
-		SimFactory factory = new SimFactory("test");
+		SimFactory factory = new SimFactory(RESOURCES_XML);
 		TestInterface testInterface = factory.getResource(TestInterface.class);
 
 		logger.info(testInterface.toString());
@@ -41,7 +43,7 @@ public class SimFactoryTest {
 	public void testSimFactoryNotFound() throws Exception {
 
 		try {
-			SimFactory factory = new SimFactory("test");
+			SimFactory factory = new SimFactory(RESOURCES_XML);
 			TestNotFoundInterface testNotFoundInterface = factory
 					.getResource(TestNotFoundInterface.class);
 
@@ -57,7 +59,7 @@ public class SimFactoryTest {
 	@Test
 	public void testDependencyInjection() throws Exception {
 
-		SimFactory factory = new SimFactory("test");
+		SimFactory factory = new SimFactory(RESOURCES_XML);
 		TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory.getResource(TestInterface.class);
 		
 		assertNotNull(testInterfaceImpl);
