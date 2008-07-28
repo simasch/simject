@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- resources.xml schema -->
+<xsd:schema targetNamespace="http://simject.org/xml/ns/resources"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:resources="http://simject.org/xml/ns/resources"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0">
+	<xsd:annotation>
+		<xsd:documentation>
+      @(#)resources_1_0.xsd  1.0  Jul 28 2008
+    </xsd:documentation>
+	</xsd:annotation>
+	<xsd:annotation>
+		<xsd:documentation>
+	    </xsd:documentation>
+	</xsd:annotation>
+	<xsd:annotation>
+		<xsd:documentation>
+		></xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="resources">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="resource" minOccurs="1" maxOccurs="unbounded"
+					type="resources:resourceType" />
+			</xsd:sequence>
+			<xsd:attribute name="version" type="resources:versionType"
+				fixed="1.0" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="versionType">
+		<xsd:restriction base="xsd:token">
+			<xsd:pattern value="[0-9]+(\.[0-9]+)*" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="resourceType">
+		<xsd:attribute name="name" type="xsd:string" use="optional"></xsd:attribute>
+		<xsd:attribute name="type" type="xsd:string" use="required"></xsd:attribute>
+		<xsd:attribute name="realizedby" type="xsd:string" use="optional"></xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>
