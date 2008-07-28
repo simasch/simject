@@ -5,6 +5,9 @@ import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simject.library.SimFactory;
+import org.simject.library.test.dummy.TestClass;
+import org.simject.library.test.dummy.TestInterface;
+import org.simject.library.test.dummy.TestNotFoundInterface;
 
 public class SimFactoryTest {
 
@@ -47,7 +50,7 @@ public class SimFactoryTest {
 		catch (Exception e) {
 			Assert
 					.assertEquals(
-							"Resource of type org.simject.library.test.TestNotFoundInterface not found",
+							"Resource of type org.simject.library.test.dummy.TestNotFoundInterface not found",
 							e.getMessage());
 		}
 	}
