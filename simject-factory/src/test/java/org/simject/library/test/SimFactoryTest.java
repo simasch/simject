@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.simject.library.SimFactory;
+import org.simject.SimFactory;
 import org.simject.library.test.dummy.TestClass;
 import org.simject.library.test.dummy.TestInterface;
 import org.simject.library.test.dummy.TestNotFoundInterface;
@@ -39,10 +39,9 @@ public class SimFactoryTest {
 	@Test
 	public void testSimFactoryNotFound() throws Exception {
 
-		TestNotFoundInterface testNotFoundInterface;
 		try {
 			SimFactory factory = new SimFactory("test");
-			testNotFoundInterface = factory
+			TestNotFoundInterface testNotFoundInterface = factory
 					.getResource(TestNotFoundInterface.class);
 
 			Assert.fail();
