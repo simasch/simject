@@ -1,4 +1,4 @@
-package org.simject.library;
+package org.simject;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
