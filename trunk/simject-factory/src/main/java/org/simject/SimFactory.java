@@ -22,15 +22,15 @@ public class SimFactory {
 	private final static Logger logger = Logger.getLogger(SimFactory.class
 			.getName());
 
-	private final static String DEFAULT_FILENAME = "META-INF/resources.xml";
+	private final static String DEFAULT_DIRECTORY = "META-INF/";
 
-	private String name;
+	private String fileName;
 
 	@SuppressWarnings("unchecked")
 	private Map<Class, Object> resourceMap = new HashMap<Class, Object>();
 
-	public SimFactory(String name) {
-		this.name = name;
+	public SimFactory(String fileName) {
+		this.fileName = fileName;
 
 		this.loadXmlConfig();
 
@@ -54,7 +54,7 @@ public class SimFactory {
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 
 			InputStream is = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream(DEFAULT_FILENAME);
+					.getResourceAsStream(DEFAULT_DIRECTORY + this.fileName);
 
 			if (is != null) {
 				Resources resources = (Resources) unmarshaller.unmarshal(is);
@@ -63,7 +63,8 @@ public class SimFactory {
 				}
 			}
 			else {
-				throw new FileNotFoundException(DEFAULT_FILENAME + " not found");
+				throw new FileNotFoundException(DEFAULT_DIRECTORY
+						+ this.fileName + " not found");
 			}
 		}
 		catch (Exception e) {
