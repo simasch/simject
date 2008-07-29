@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
+import org.simject.util.SimContants;
 
 /**
  * Used to provide remote access over HTTP to a resource
@@ -56,7 +57,7 @@ public class HttpClientProxy implements InvocationHandler {
 			throws Throwable {
 		Object result;
 		try {
-			result = this.invokeUrl(args);
+			result = this.invokeUrl(method, args);
 		}
 		catch (Exception e) {
 			logger.fatal(e);
@@ -66,7 +67,7 @@ public class HttpClientProxy implements InvocationHandler {
 		return result;
 	}
 
-	private Object invokeUrl(Object[] args) throws IOException,
+	private Object invokeUrl(Method method, Object[] args) throws IOException,
 			ClassNotFoundException {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -75,6 +76,9 @@ public class HttpClientProxy implements InvocationHandler {
 
 		PostMethod post = new PostMethod(this.url.toString());
 		post.setRequestEntity(new ByteArrayRequestEntity(baos.toByteArray()));
+
+		post.addParameter(SimContants.PARAMETER_METHOD, method.getName());
+		this.parseParamaters(method, post);
 
 		HttpClient httpclient = new HttpClient();
 		httpclient.executeMethod(post);
@@ -87,5 +91,16 @@ public class HttpClientProxy implements InvocationHandler {
 		post.releaseConnection();
 
 		return result;
+	}
+
+	private void parseParamaters(Method method, PostMethod post) {
+		StringBuffer params = new StringBuffer();
+		for (Class param : method.getParameterTypes()) {
+			params.append(param + ",");
+		}
+		if (params.length() > 0) {
+			String parameters = params.toString();
+			post.addParameter(SimContants.PARAMETER_TYPES, parameters);
+		}
 	}
 }

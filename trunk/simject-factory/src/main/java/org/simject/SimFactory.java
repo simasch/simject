@@ -34,6 +34,7 @@ import org.simject.exception.SimResourceNotFoundException;
 import org.simject.jaxb.Property;
 import org.simject.jaxb.Resource;
 import org.simject.jaxb.Resources;
+import org.simject.util.SimContants;
 
 /**
  * SimFactory represents the IOC container. It parses the XML configuration
@@ -45,11 +46,6 @@ import org.simject.jaxb.Resources;
 public class SimFactory {
 
 	private static final Logger logger = Logger.getLogger(SimFactory.class);
-
-	/**
-	 * XML configuration files must be placed in the META-INF directory
-	 */
-	private final static String DEFAULT_DIRECTORY = "META-INF/";
 
 	/**
 	 * Holds the filenames
@@ -110,7 +106,8 @@ public class SimFactory {
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 
 			InputStream is = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream(DEFAULT_DIRECTORY + fileName);
+					.getResourceAsStream(
+							SimContants.DEFAULT_DIRECTORY + fileName);
 
 			if (is != null) {
 				Resources resources = (Resources) unmarshaller.unmarshal(is);
@@ -119,8 +116,8 @@ public class SimFactory {
 				}
 			}
 			else {
-				throw new FileNotFoundException(DEFAULT_DIRECTORY + fileName
-						+ " not found");
+				throw new FileNotFoundException(SimContants.DEFAULT_DIRECTORY
+						+ fileName + " not found");
 			}
 		}
 		catch (Exception e) {
