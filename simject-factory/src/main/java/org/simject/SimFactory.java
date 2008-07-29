@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,7 @@ import org.simject.exception.SimResourceNotFoundException;
 import org.simject.jaxb.Property;
 import org.simject.jaxb.Resource;
 import org.simject.jaxb.Resources;
+import org.simject.remote.HttpClientProxy;
 import org.simject.util.SimContants;
 
 /**
@@ -134,37 +137,67 @@ public class SimFactory {
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws MalformedURLException
 	 */
 	@SuppressWarnings("unchecked")
 	private void createResource(Resource resource)
 			throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException {
+			IllegalAccessException, MalformedURLException {
 		String className = resource.getType();
 		Class clazz = Class.forName(className);
 
 		Object obj = null;
 		if (resource.getType().equals(EntityManager.class.getName())) {
-			// special treatment for EntityManager
-			Map<String, String> props = new HashMap<String, String>();
-			for (Property property : resource.getProperty()) {
-				props.put(property.getName(), property.getValue());
-			}
-			EntityManagerFactory emf = Persistence.createEntityManagerFactory(
-					resource.getName(), props);
-			obj = emf.createEntityManager();
+			obj = this.createEntityManager(resource);
+		}
+		else if (resource.getTarget() != null
+				&& 	resource.getTarget().startsWith("http")) {
+			obj = this.createHttpClientProxy(clazz, resource.getTarget());
 		}
 		else {
-			if (resource.getTarget() == null || resource.getTarget().equals("")) {
-				obj = createInstance(clazz);
-			}
-			else {
-				String realizedby = resource.getTarget();
-				Class realizedbyClazz = Class.forName(realizedby);
-				obj = createInstance(realizedbyClazz);
-			}
+			obj = this.createPojo(resource, clazz);
 		}
 		this.resourceMap.put(clazz, obj);
 
+	}
+
+	private Object createHttpClientProxy(Class clazz, String target)
+			throws MalformedURLException {
+		Object obj = null;
+
+		URL url = new URL(target);
+		obj = HttpClientProxy.newInstance(Thread.currentThread()
+				.getContextClassLoader(), new Class[] { clazz }, url);
+
+		return obj;
+	}
+
+	private Object createPojo(Resource resource, Class clazz)
+			throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
+		Object obj;
+		if (resource.getTarget() == null || resource.getTarget().equals("")) {
+			obj = createInstance(clazz);
+		}
+		else {
+			String realizedby = resource.getTarget();
+			Class realizedbyClazz = Class.forName(realizedby);
+			obj = createInstance(realizedbyClazz);
+		}
+		return obj;
+	}
+
+	private Object createEntityManager(Resource resource) {
+		Object obj;
+		// special treatment for EntityManager
+		Map<String, String> props = new HashMap<String, String>();
+		for (Property property : resource.getProperty()) {
+			props.put(property.getName(), property.getValue());
+		}
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory(
+				resource.getName(), props);
+		obj = emf.createEntityManager();
+		return obj;
 	}
 
 	/**
