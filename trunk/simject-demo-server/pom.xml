@@ -29,12 +29,12 @@
 	</parent>
 	<build>
 		<finalName>simject-demo-server</finalName>
-		<plugins>
+		<!-- plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 			</plugin>
-		</plugins>
+		</plugins -->
 	</build>
 	<scm>
 		<connection>scm:svn:https://simject.googlecode.com/svn/simject-demo-server</connection>
