@@ -29,5 +29,11 @@
 	</parent>
 	<build>
 		<finalName>simject-demo-server</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
 	</build>
 </project>
