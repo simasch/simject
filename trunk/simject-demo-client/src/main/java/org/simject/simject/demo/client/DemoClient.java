@@ -1,11 +1,14 @@
 package org.simject.simject.demo.client;
 
+import org.apache.log4j.Logger;
 import org.simject.SimFactory;
 import org.simject.demo.model.Employee;
 import org.simject.demo.service.EmployeeService;
 
 public class DemoClient {
 
+	private final static Logger logger = Logger.getLogger(DemoClient.class); 
+	
 	/**
 	 * @param args
 	 */
@@ -15,7 +18,8 @@ public class DemoClient {
 		EmployeeService service = factory.getResource(EmployeeService.class);
 		Employee employee = new Employee();
 		employee.setName("Simon Martinelli");
-		System.out.println(service.getHello(employee));
+		
+		logger.info(service.getHello(employee));
 	}
 
 }
