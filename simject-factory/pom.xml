@@ -62,4 +62,8 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+	<scm>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-factory</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-factory</developerConnection>
+	</scm>
 </project>

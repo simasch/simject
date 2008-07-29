@@ -102,4 +102,8 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<scm>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-parent</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-parent</developerConnection>
+	</scm>
 </project>
