@@ -10,4 +10,9 @@ public class TestInterfaceImpl implements TestInterface {
 	public TestClass getTestClass() {
 		return this.testClass;
 	}
+
+	@Override
+	public void sayHello() {
+		System.out.println("Hello World");
+	}
 }
