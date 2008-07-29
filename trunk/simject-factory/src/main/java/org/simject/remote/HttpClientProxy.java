@@ -15,20 +15,20 @@
  */
 package org.simject.remote;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.URL;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.log4j.Logger;
 import org.simject.util.SimContants;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * Used to provide remote access over HTTP to a resource
@@ -71,34 +71,35 @@ public class HttpClientProxy implements InvocationHandler {
 	private Object invokeUrl(Method method, Object[] args) throws IOException,
 			ClassNotFoundException {
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(args);
-		oos.flush();
-		oos.close();
-		baos.flush();
-		baos.close();
+		XStream xstream = new XStream();
+		String xml = xstream.toXML(args);
 
 		PostMethod post = new PostMethod(this.url.toString());
+		RequestEntity req = new ByteArrayRequestEntity(xml.getBytes(),
+				SimContants.CONTENT_TYPE_XML);
+		post.setRequestEntity(req);
 
-		post.addParameter(SimContants.PARAMETER_METHOD, method.getName());
+		Header headerMethod = new Header(SimContants.PARAMETER_METHOD, method
+				.getName());
+		post.addRequestHeader(headerMethod);
 
 		StringBuffer params = new StringBuffer();
 		for (Class param : method.getParameterTypes()) {
-			params.append(param + ",");
+			params.append(param.getName() + ",");
 		}
 		if (params.length() > 0) {
 			String parameters = params.toString();
-			post.addParameter(SimContants.PARAMETER_TYPES, parameters);
+			Header headerParamTypes = new Header(SimContants.PARAMETER_TYPES,
+					parameters);
+			post.addRequestHeader(headerParamTypes);
 		}
-		post.setRequestBody(baos.toString());
 
 		HttpClient httpclient = new HttpClient();
 		httpclient.executeMethod(post);
 
-		ObjectInputStream ois = new ObjectInputStream(post.getResponseBodyAsStream());
-		Object result = ois.readObject();
-		ois.close();
+		logger.debug(post.getResponseBodyAsString());
+
+		Object result = xstream.fromXML(post.getResponseBodyAsString());
 
 		post.releaseConnection();
 

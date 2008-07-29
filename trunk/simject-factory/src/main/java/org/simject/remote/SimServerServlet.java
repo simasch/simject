@@ -15,6 +15,7 @@
  */
 package org.simject.remote;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -27,13 +28,17 @@ import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.Response;
 
 import org.apache.log4j.Logger;
 import org.simject.SimFactory;
 import org.simject.util.SimContants;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * Used to provide remote access over HTTP to a resource
@@ -93,12 +98,11 @@ public class SimServerServlet extends HttpServlet {
 			Object obj, Object args) throws IllegalAccessException,
 			InvocationTargetException, IOException, ClassNotFoundException,
 			SecurityException, NoSuchMethodException {
-		
-		String methodString = req.getParameter(SimContants.PARAMETER_METHOD);
+
+		String methodString = req.getHeader(SimContants.PARAMETER_METHOD);
 		logger.debug("methodString: " + methodString);
 		String parameterTypesString = req
-				.getParameter(SimContants.PARAMETER_TYPES);
-		logger.debug("parameterTypesString: " + parameterTypesString);
+				.getHeader(SimContants.PARAMETER_TYPES);
 
 		Object result = null;
 		if (parameterTypesString == null) {
@@ -108,17 +112,23 @@ public class SimServerServlet extends HttpServlet {
 		else {
 			Class[] parameterTypes = this
 					.getParameterTypes(parameterTypesString);
+
 			Method method = obj.getClass().getMethod(methodString,
 					parameterTypes);
+
+			if (args instanceof Object[]) {
+				Object[] objects = (Object[]) args;
+				if (objects.length == 1) {
+					args = objects[0];
+				}
+			}
+			logger.debug("args: " + args);
 			result = method.invoke(obj, args);
 		}
 		if (result != null) {
-			OutputStream os = resp.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.writeObject(result);
-			oos.flush();
-			oos.close();
-			os.flush();
+			XStream xstream = new XStream();
+			String xml = xstream.toXML(result);
+			resp.getWriter().write(xml);
 		}
 	}
 
@@ -131,11 +141,14 @@ public class SimServerServlet extends HttpServlet {
 			throws ClassNotFoundException {
 		Class[] parameters = new Class[0];
 		if (parameterString != null) {
-			StringTokenizer st = new StringTokenizer(parameterString);
+			StringTokenizer st = new StringTokenizer(parameterString, ",");
 			parameters = new Class[st.countTokens()];
 			int i = 0;
 			while (st.hasMoreTokens()) {
-				Class clazz = Class.forName(st.nextToken());
+				String className = st.nextToken();
+				logger.debug("parameterTyp: " + className);
+
+				Class clazz = Class.forName(className);
 				parameters[i] = clazz;
 				i++;
 			}
@@ -151,17 +164,28 @@ public class SimServerServlet extends HttpServlet {
 	 */
 	private Object getArguments(HttpServletRequest req) throws IOException,
 			ClassNotFoundException {
-		InputStream in = req.getInputStream();
-		Object args = null;
-		try {
-			ObjectInputStream ois = new ObjectInputStream(in);
-			args = ois.readObject();
-		}
-		catch (EOFException e) {
-			// nothing to read so no parameters present!
-			e.printStackTrace();
-		}
+
+		String xml = this.inputStreamToString(req.getInputStream());
+		logger.debug(xml);
+
+		XStream xstream = new XStream();
+		Object args = xstream.fromXML(xml);
+
 		return args;
+	}
+
+	/**
+	 * @param in
+	 * @return
+	 * @throws IOException
+	 */
+	private String inputStreamToString(InputStream in) throws IOException {
+		StringBuffer out = new StringBuffer();
+		byte[] b = new byte[4096];
+		for (int n; (n = in.read(b)) != -1;) {
+			out.append(new String(b, 0, n));
+		}
+		return out.toString();
 	}
 
 	/**
