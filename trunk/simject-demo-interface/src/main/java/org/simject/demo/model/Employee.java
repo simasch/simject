@@ -1,7 +1,11 @@
 package org.simject.demo.model;
 
-public class Employee {
+import java.io.Serializable;
 
+public class Employee implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 
 	public String getName() {
