@@ -5,7 +5,7 @@ import org.simject.demo.model.Employee;
 import org.simject.demo.service.EmployeeService;
 
 
-public class DemoApplication {
+public class FatJpaClient {
 
 	/**
 	 * @param args
