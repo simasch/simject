@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008 Simon Martinelli, Rebenweg 32, 3236 Gampelen, Switzerland
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.simject;
 
 import java.io.FileNotFoundException;
@@ -20,25 +35,59 @@ import org.simject.jaxb.Property;
 import org.simject.jaxb.Resource;
 import org.simject.jaxb.Resources;
 
+/**
+ * SimFactory represents the IOC container. It parses the XML configuration
+ * files, does the dependency injection and provides methods for retrieving
+ * resources.
+ * 
+ * @author Simon Martinelli
+ */
 public class SimFactory {
 
 	private static final Logger logger = Logger.getLogger(SimFactory.class);
 
+	/**
+	 * XML configuration files must be placed in the META-INF directory
+	 */
 	private final static String DEFAULT_DIRECTORY = "META-INF/";
 
-	private String fileName;
+	/**
+	 * Holds the filenames
+	 */
+	private String[] fileNames;
 
+	/**
+	 * Container holding all configured resources
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<Class, Object> resourceMap = new HashMap<Class, Object>();
 
-	public SimFactory(String fileName) {
-		this.fileName = fileName;
+	/**
+	 * Constructor that takes 0-n configuration files
+	 * 
+	 * @param fileNames
+	 */
+	public SimFactory(String... fileNames) {
+		this.fileNames = new String[fileNames.length];
 
-		this.loadXmlConfig();
-
+		int i = 0;
+		for (String fileName : fileNames) {
+			this.fileNames[i] = fileName;
+			this.loadXmlConfig(fileName);
+		}
 		this.injectDependencies();
 	}
 
+	/**
+	 * Generic method to retrieve a resource identified by <type> If <type> is
+	 * an interface, <target> must be present. If <type> is
+	 * javax.persistence.EntityManager a special treatment will occur
+	 * 
+	 * @param <T>
+	 * @param clazz
+	 *            must be the type configured in the config file
+	 * @return an instance of the desired type
+	 */
 	public <T> T getResource(Class<T> clazz) {
 		Object obj = this.resourceMap.get(clazz);
 		if (obj == null) {
@@ -50,13 +99,18 @@ public class SimFactory {
 		return (T) obj;
 	}
 
-	private void loadXmlConfig() {
+	/**
+	 * Uses JAXB to parse the config file
+	 * 
+	 * @param fileName
+	 */
+	private void loadXmlConfig(String fileName) {
 		try {
 			JAXBContext jc = JAXBContext.newInstance("org.simject.jaxb");
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 
 			InputStream is = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream(DEFAULT_DIRECTORY + this.fileName);
+					.getResourceAsStream(DEFAULT_DIRECTORY + fileName);
 
 			if (is != null) {
 				Resources resources = (Resources) unmarshaller.unmarshal(is);
@@ -65,8 +119,8 @@ public class SimFactory {
 				}
 			}
 			else {
-				throw new FileNotFoundException(DEFAULT_DIRECTORY
-						+ this.fileName + " not found");
+				throw new FileNotFoundException(DEFAULT_DIRECTORY + fileName
+						+ " not found");
 			}
 		}
 		catch (Exception e) {
@@ -75,6 +129,15 @@ public class SimFactory {
 		}
 	}
 
+	/**
+	 * Creates an new Resource and stores it in the resource container
+	 * 
+	 * @param resource
+	 *            the resource retrieved from config file
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
 	@SuppressWarnings("unchecked")
 	private void createResource(Resource resource)
 			throws ClassNotFoundException, InstantiationException,
@@ -107,6 +170,15 @@ public class SimFactory {
 
 	}
 
+	/**
+	 * Creates an instance of the provided Class. If Class is an Interface an
+	 * Exception is thrown.
+	 * 
+	 * @param clazz
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
 	private Object createInstance(Class clazz) throws InstantiationException,
 			IllegalAccessException {
 
@@ -118,6 +190,9 @@ public class SimFactory {
 		return obj;
 	}
 
+	/**
+	 * Loops over the resource container and does the dependency injection
+	 */
 	private void injectDependencies() {
 		try {
 			for (Object obj : this.resourceMap.values()) {
