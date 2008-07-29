@@ -7,7 +7,7 @@
   <parent>
   	<artifactId>simject-parent</artifactId>
   	<groupId>org.simject</groupId>
-  	<version>0.0.2</version>
+  	<version>0.0.3-SNAPSHOT</version>
   </parent>
   <dependencies>
     <dependency>
@@ -18,7 +18,7 @@
     </dependency>
   </dependencies>
 	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn/simject-interface/tags/simject-super-parent-0.0.2/simject-interface</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-interface/tags/simject-super-parent-0.0.2/simject-interface</developerConnection>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-interface</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-interface</developerConnection>
 	</scm>
 </project>
