@@ -30,6 +30,7 @@
 	<modules>
 		<module>../simject-factory</module>
 		<module>../simject-demo</module>
+		<module>../simject-demo-interface</module>
 		<module>../simject-demo-client</module>
 		<module>../simject-demo-server</module>
 	</modules>
@@ -83,6 +84,11 @@
 				<groupId>javax.persistence</groupId>
 				<artifactId>persistence-api</artifactId>
 				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>3.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
