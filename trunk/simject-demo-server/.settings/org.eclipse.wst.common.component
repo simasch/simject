@@ -3,7 +3,14 @@
     <wb-module deploy-name="simject-demo-server">
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <property name="context-root" value="simject-demo-server"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/simject-demo-interface/simject-demo-interface">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/simject-factory/simject-factory">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path"/>
+        <property name="context-root" value="simject-demo-server"/>
     </wb-module>
 </project-modules>
