@@ -15,9 +15,19 @@
  */
 package org.simject.remote;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.log4j.Logger;
 
 /**
  * Used to provide remote access over HTTP to a resource
@@ -25,16 +35,20 @@ import java.lang.reflect.Method;
  * @author Simon Martinelli
  */
 public class HttpClientProxy implements InvocationHandler {
-	private Object obj;
 
-	public static Object newInstance(Object obj) {
-		return java.lang.reflect.Proxy.newProxyInstance(obj.getClass()
-				.getClassLoader(), obj.getClass().getInterfaces(),
-				new HttpClientProxy(obj));
+	private final static Logger logger = Logger
+			.getLogger(HttpClientProxy.class);
+
+	private URL url;
+
+	public static Object newInstance(ClassLoader loader, Class<?>[] interfaces,
+			URL url) {
+		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
+				new HttpClientProxy(url));
 	}
 
-	private HttpClientProxy(Object obj) {
-		this.obj = obj;
+	private HttpClientProxy(URL url) {
+		this.url = url;
 	}
 
 	@Override
@@ -42,20 +56,36 @@ public class HttpClientProxy implements InvocationHandler {
 			throws Throwable {
 		Object result;
 		try {
-			System.out.println("before method " + method.getName());
-			result = method.invoke(obj, args);
-		}
-		catch (InvocationTargetException e) {
-			throw e.getTargetException();
+			result = this.invokeUrl(args);
 		}
 		catch (Exception e) {
+			logger.fatal(e);
 			throw new RuntimeException("unexpected invocation exception: "
 					+ e.getMessage());
-		}
-		finally {
-			System.out.println("after method " + method.getName());
 		}
 		return result;
 	}
 
+	private Object invokeUrl(Object[] args) throws IOException,
+			ClassNotFoundException {
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(args);
+
+		PostMethod post = new PostMethod(this.url.toString());
+		post.setRequestEntity(new ByteArrayRequestEntity(baos.toByteArray()));
+
+		HttpClient httpclient = new HttpClient();
+		httpclient.executeMethod(post);
+		byte[] response = post.getResponseBody();
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(response);
+		ObjectInputStream ois = new ObjectInputStream(bais);
+		Object result = ois.readObject();
+
+		post.releaseConnection();
+
+		return result;
+	}
 }
