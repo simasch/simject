@@ -8,6 +8,6 @@ public class SimContants {
 	
 	public final static String PARAMETER_TYPES = "types";
 	
-	public final static String CONTENT_TYPE_SERIALIZED_OBJECT = "application/x-java-serialized-object";
+	public final static String CONTENT_TYPE_XML = "text/xml";
 
 }
