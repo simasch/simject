@@ -29,7 +29,7 @@
 	</build>
 	<modules>
 		<module>../simject-factory</module>
-		<module>../simject-demo</module>
+		<module>../simject-demo-fatjpaclient</module>
 		<module>../simject-demo-interface</module>
 		<module>../simject-demo-client</module>
 		<module>../simject-demo-server</module>
