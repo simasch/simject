@@ -1,8 +1,10 @@
 #labels Phase-Implementation
 #Current features of simject
 = POJO Injection = 
+== @Resource ==
+Use @Resource to specify the attribute where dependency injection should occur. 
 
-Use @Resource to specify the attribute where dependency injection should occur. In this example we want to inject EmployeeManager to EmployeeServiceImpl class:
+In this example we want to inject EmployeeManager to EmployeeServiceImpl class:
 {{{
 //EmployeeServiceImpl.java
 
@@ -10,6 +12,7 @@ Use @Resource to specify the attribute where dependency injection should occur. 
 private EmployeeManager employeeManager;
 }}}
 
+== XML Configuration ==
 There is only little XML Configuration needed. The file must be placed in the META-INF directory!
 {{{
 <resources xmlns="http://simject.org/xml/ns/resources"
@@ -46,6 +49,8 @@ To simplify the use of JPA you can specify an EntityManger as a resource:
 @Resource
 private EntityManager em;
 }}}
+
+== XML Configuration ==
 In the XML configuration you can specify the EntityManager and you also can define properties for the EntityManger:
 {{{
 <resource type="javax.persistence.EntityManager" name="org.simject.demo">
@@ -58,6 +63,8 @@ In the XML configuration you can specify the EntityManager and you also can defi
   <property name="hibernate.hbm2ddl.auto" value="create-drop" />
 </resource>
 }}}
+
+== persistence.xml ==
 The persistence.xml will then look as follow:
 {{{
 <persistence version="1.0"
