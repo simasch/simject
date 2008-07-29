@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.simject.remote;
+package org.simject.remote.client;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -31,7 +31,8 @@ import org.simject.util.SimContants;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * Used to provide remote access over HTTP to a resource
+ * Used to provide remote access over HTTP to a resource. HttpClientProxy uses
+ * Commons HTTPClient for communication and XStream for XML serialization
  * 
  * @author Simon Martinelli
  */
@@ -40,14 +41,30 @@ public class HttpClientProxy implements InvocationHandler {
 	private final static Logger logger = Logger
 			.getLogger(HttpClientProxy.class);
 
+	/**
+	 * Holds the URL
+	 */
 	private URL url;
 
+	/**
+	 * Factory Method for creation
+	 * 
+	 * @param loader
+	 * @param interfaces
+	 * @param url
+	 * @return an instance of HttpClientProxy
+	 */
 	public static Object newInstance(ClassLoader loader, Class<?>[] interfaces,
 			URL url) {
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
 				new HttpClientProxy(url));
 	}
 
+	/**
+	 * Private Constructor
+	 * 
+	 * @param url
+	 */
 	private HttpClientProxy(URL url) {
 		this.url = url;
 	}
@@ -68,6 +85,18 @@ public class HttpClientProxy implements InvocationHandler {
 		return result;
 	}
 
+	/**
+	 * Synchronous call over HTTP
+	 * 
+	 * 1. Serializes the argumens and make a remot call to the desired method.
+	 * 2. Deserializes the response from the server.
+	 * 
+	 * @param method
+	 * @param args
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private Object invokeUrl(Method method, Object[] args) throws IOException,
 			ClassNotFoundException {
 
@@ -85,7 +114,8 @@ public class HttpClientProxy implements InvocationHandler {
 
 		StringBuffer params = new StringBuffer();
 		for (Class param : method.getParameterTypes()) {
-			params.append(param.getName() + ",");
+			params.append(param.getName()
+					+ SimContants.PARAMETER_TYPE_DELIMITER);
 		}
 		if (params.length() > 0) {
 			String parameters = params.toString();
