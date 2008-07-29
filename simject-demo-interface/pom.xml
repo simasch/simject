@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>simject-demo-interface</artifactId>
   <packaging>jar</packaging>
@@ -8,7 +7,7 @@
   <parent>
   	<artifactId>simject-parent</artifactId>
   	<groupId>org.simject</groupId>
-  	<version>0.0.1-SNAPSHOT</version>
+  	<version>0.0.1</version>
   </parent>
   <dependencies>
     <dependency>
@@ -19,7 +18,7 @@
     </dependency>
   </dependencies>
 	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn/simject-interface</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-interface</developerConnection>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-interface/tags/simject-super-parent-0.0.1/simject-interface</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-interface/tags/simject-super-parent-0.0.1/simject-interface</developerConnection>
 	</scm>
 </project>
