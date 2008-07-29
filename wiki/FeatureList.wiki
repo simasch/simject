@@ -1,3 +1,4 @@
+#labels Phase-Implementation
 #Current features of simject
 = POJO Injection = 
 
@@ -75,3 +76,42 @@ The persistence.xml will then look as follow:
 Moving the properties to the resource config file will simplify the use of this persistence-unit in different environments.
 
 = Remoting =
+
+Remoting in simject is straigt forwared as well. simject uses Jakarta Commons HttpClient for communication over HTTP and XStream as XML serializer.
+
+== Client ==
+On the client side you have to define the URL of the server resource:
+{{{
+<resource type="org.simject.demo.service.EmployeeService"
+  target="http://localhost:8080/simject-demo-server/remote/org.simject.demo.service.EmployeeService" />
+}}}
+http://localhost:8080/simject-demo-server/remote defines the servlet listening to the requests and /org.simject.demo.service.EmployeeService ist simply the type of the requested resource.
+
+== Server ==
+On the server side you need org.simject.remote.server.SimServerServlet which dispatches all the requests and calls the method on the requested resource.
+
+Here an example web.xml:
+{{{
+<web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+  http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
+
+  <display-name>simject demo server</display-name>
+  <servlet>
+    <servlet-name>remote</servlet-name>
+    <servlet-class>org.simject.remote.server.SimServerServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>remote</servlet-name>
+    <url-pattern>/remote/*</url-pattern>
+  </servlet-mapping>
+  <context-param>
+    <param-name>simjectConfig</param-name>
+    <param-value>resources.xml</param-value>
+  </context-param>
+</web-app>
+}}}
+The context param "simjectConfig" specifies the filename of the configuration.
+
+That's all!
