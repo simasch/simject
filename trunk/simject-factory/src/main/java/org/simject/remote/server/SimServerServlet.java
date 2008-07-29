@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.simject.remote;
+package org.simject.remote.server;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -50,14 +50,22 @@ public class SimServerServlet extends HttpServlet {
 	private final static Logger logger = Logger
 			.getLogger(SimServerServlet.class);
 
+	/**
+	 * Context parameter that contains the configuration file location
+	 */
 	private final static String SIMJECT_CONFIG = "simjectConfig";
 
+	/**
+	 * SimFactory
+	 */
 	private SimFactory simFactory;
 
 	@Override
 	public void init() throws ServletException {
+		// Get the context parameter with the config file
 		String configFile = (String) this.getServletContext().getInitParameter(
 				SIMJECT_CONFIG);
+		// create a SimFactory based on the config file
 		simFactory = new SimFactory(configFile);
 	}
 
@@ -66,23 +74,26 @@ public class SimServerServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
+			// get the classname, create a Class instance and get the resource
+			// from the SimFactory
 			String className = this.getClassName(req);
 			Class clazz = Class.forName(className);
 			Object obj = this.simFactory.getResource(clazz);
-			if (obj == null) {
-				logger.fatal("Class not found!");
-				throw new Exception("Class not Found");
-			}
+			// get the arguments passed by the client and invoke the desired
+			// method
 			Object args = this.getArguments(req);
 			this.invokeMethod(req, resp, obj, args);
 		}
 		catch (Exception e) {
+			// if exception occurs log it
 			logger.fatal(e);
 			e.printStackTrace();
 		}
 	}
 
 	/**
+	 * Invokes a method based on the parameters passed from the client
+	 * 
 	 * @param req
 	 * @param resp
 	 * @param obj
@@ -99,24 +110,30 @@ public class SimServerServlet extends HttpServlet {
 			InvocationTargetException, IOException, ClassNotFoundException,
 			SecurityException, NoSuchMethodException {
 
+		// get the method name from the HTTP header
 		String methodString = req.getHeader(SimContants.PARAMETER_METHOD);
 		logger.debug("methodString: " + methodString);
+		// get the parameter types from the HTTP header
 		String parameterTypesString = req
 				.getHeader(SimContants.PARAMETER_TYPES);
 
 		Object result = null;
 		if (parameterTypesString == null) {
+			// method without parameters to invoke
 			Method method = obj.getClass().getMethod(methodString);
 			result = method.invoke(obj);
 		}
 		else {
+			// method with parameters should be called. convert the string from
+			// the header to Class array
 			Class[] parameterTypes = this
 					.getParameterTypes(parameterTypesString);
-
 			Method method = obj.getClass().getMethod(methodString,
 					parameterTypes);
 
 			if (args instanceof Object[]) {
+				// TODO problem with Object[] and variabel parameter list. Don't
+				// know how to convert correctly!
 				Object[] objects = (Object[]) args;
 				if (objects.length == 1) {
 					args = objects[0];
@@ -126,6 +143,7 @@ public class SimServerServlet extends HttpServlet {
 			result = method.invoke(obj, args);
 		}
 		if (result != null) {
+			// if there is a result use XStream to serialize it to XML
 			XStream xstream = new XStream();
 			String xml = xstream.toXML(result);
 			resp.getWriter().write(xml);
@@ -133,6 +151,8 @@ public class SimServerServlet extends HttpServlet {
 	}
 
 	/**
+	 * Returns an array of Class containing the types of the parameters
+	 * 
 	 * @param parameterString
 	 * @return
 	 * @throws ClassNotFoundException
@@ -141,7 +161,9 @@ public class SimServerServlet extends HttpServlet {
 			throws ClassNotFoundException {
 		Class[] parameters = new Class[0];
 		if (parameterString != null) {
-			StringTokenizer st = new StringTokenizer(parameterString, ",");
+			// The parameter types are seperated by ","
+			StringTokenizer st = new StringTokenizer(parameterString,
+					SimContants.PARAMETER_TYPE_DELIMITER);
 			parameters = new Class[st.countTokens()];
 			int i = 0;
 			while (st.hasMoreTokens()) {
@@ -157,6 +179,8 @@ public class SimServerServlet extends HttpServlet {
 	}
 
 	/**
+	 * Uses XStream to convert XML to Object
+	 * 
 	 * @param req
 	 * @return
 	 * @throws IOException
@@ -175,8 +199,10 @@ public class SimServerServlet extends HttpServlet {
 	}
 
 	/**
+	 * Helper Method to convert InputStream to String 
+	 * 
 	 * @param in
-	 * @return
+	 * @return 
 	 * @throws IOException
 	 */
 	private String inputStreamToString(InputStream in) throws IOException {
@@ -189,6 +215,8 @@ public class SimServerServlet extends HttpServlet {
 	}
 
 	/**
+	 * Parses the class name out of the path info
+	 * 
 	 * @param req
 	 * @return
 	 */

@@ -36,7 +36,7 @@ import org.simject.exception.SimResourceNotFoundException;
 import org.simject.jaxb.Property;
 import org.simject.jaxb.Resource;
 import org.simject.jaxb.Resources;
-import org.simject.remote.HttpClientProxy;
+import org.simject.remote.client.HttpClientProxy;
 import org.simject.util.SimContants;
 
 /**
@@ -151,7 +151,7 @@ public class SimFactory {
 			obj = this.createEntityManager(resource);
 		}
 		else if (resource.getTarget() != null
-				&& 	resource.getTarget().startsWith("http")) {
+				&& resource.getTarget().startsWith("http")) {
 			obj = this.createHttpClientProxy(clazz, resource.getTarget());
 		}
 		else {
@@ -161,6 +161,14 @@ public class SimFactory {
 
 	}
 
+	/**
+	 * Creates a HttpClientProxy
+	 * 
+	 * @param clazz
+	 * @param target
+	 * @return
+	 * @throws MalformedURLException
+	 */
 	private Object createHttpClientProxy(Class clazz, String target)
 			throws MalformedURLException {
 		Object obj = null;
@@ -172,6 +180,16 @@ public class SimFactory {
 		return obj;
 	}
 
+	/**
+	 * Creates an simple POJO
+	 * 
+	 * @param resource
+	 * @param clazz
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 */
 	private Object createPojo(Resource resource, Class clazz)
 			throws InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
@@ -187,16 +205,21 @@ public class SimFactory {
 		return obj;
 	}
 
+	/**
+	 * Creates a JPA EntityManager
+	 * 
+	 * @param resource
+	 * @return
+	 */
 	private Object createEntityManager(Resource resource) {
-		Object obj;
-		// special treatment for EntityManager
+
 		Map<String, String> props = new HashMap<String, String>();
 		for (Property property : resource.getProperty()) {
 			props.put(property.getName(), property.getValue());
 		}
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory(
 				resource.getName(), props);
-		obj = emf.createEntityManager();
+		Object obj = emf.createEntityManager();
 		return obj;
 	}
 

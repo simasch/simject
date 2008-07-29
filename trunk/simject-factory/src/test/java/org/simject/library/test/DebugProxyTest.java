@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.simject.library.test.dummy.TestInterface;
 import org.simject.library.test.dummy.TestInterfaceImpl;
 import org.simject.proxy.DebugProxy;
-import org.simject.remote.HttpClientProxy;
+import org.simject.remote.client.HttpClientProxy;
 
 public class DebugProxyTest {
 
