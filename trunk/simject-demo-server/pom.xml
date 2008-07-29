@@ -36,4 +36,8 @@
 			</plugin>
 		</plugins>
 	</build>
+	<scm>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-demo-server</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-demo-server</developerConnection>
+	</scm>
 </project>

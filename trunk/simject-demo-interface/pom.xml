@@ -18,4 +18,8 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+	<scm>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-interface</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-interface</developerConnection>
+	</scm>
 </project>
