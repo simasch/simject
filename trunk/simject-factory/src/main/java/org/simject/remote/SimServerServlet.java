@@ -15,6 +15,7 @@
  */
 package org.simject.remote;
 
+import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +64,10 @@ public class SimServerServlet extends HttpServlet {
 			String className = this.getClassName(req);
 			Class clazz = Class.forName(className);
 			Object obj = this.simFactory.getResource(clazz);
-
+			if (obj == null) {
+				logger.fatal("Class not found!");
+				throw new Exception("Class not Found");
+			}
 			Object args = this.getArguments(req);
 			this.invokeMethod(req, resp, obj, args);
 		}
@@ -89,23 +93,32 @@ public class SimServerServlet extends HttpServlet {
 			Object obj, Object args) throws IllegalAccessException,
 			InvocationTargetException, IOException, ClassNotFoundException,
 			SecurityException, NoSuchMethodException {
+		
 		String methodString = req.getParameter(SimContants.PARAMETER_METHOD);
+		logger.debug("methodString: " + methodString);
+		String parameterTypesString = req
+				.getParameter(SimContants.PARAMETER_TYPES);
+		logger.debug("parameterTypesString: " + parameterTypesString);
 
-		String parameterString = req.getParameter(SimContants.PARAMETER_TYPES);
-
-		Class[] parameters = this.getParameterTypes(parameterString);
-		Method method = obj.getClass().getMethod(methodString, parameters);
 		Object result = null;
-		if (args != null) {
-			result = method.invoke(obj, args);
+		if (parameterTypesString == null) {
+			Method method = obj.getClass().getMethod(methodString);
+			result = method.invoke(obj);
 		}
 		else {
-			result = method.invoke(obj);
+			Class[] parameterTypes = this
+					.getParameterTypes(parameterTypesString);
+			Method method = obj.getClass().getMethod(methodString,
+					parameterTypes);
+			result = method.invoke(obj, args);
 		}
 		if (result != null) {
 			OutputStream os = resp.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
 			oos.writeObject(result);
+			oos.flush();
+			oos.close();
+			os.flush();
 		}
 	}
 
@@ -138,14 +151,15 @@ public class SimServerServlet extends HttpServlet {
 	 */
 	private Object getArguments(HttpServletRequest req) throws IOException,
 			ClassNotFoundException {
-		InputStream is = req.getInputStream();
+		InputStream in = req.getInputStream();
 		Object args = null;
 		try {
-			ObjectInputStream ois = new ObjectInputStream(is);
+			ObjectInputStream ois = new ObjectInputStream(in);
 			args = ois.readObject();
 		}
 		catch (EOFException e) {
 			// nothing to read so no parameters present!
+			e.printStackTrace();
 		}
 		return args;
 	}

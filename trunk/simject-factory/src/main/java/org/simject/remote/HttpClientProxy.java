@@ -61,6 +61,7 @@ public class HttpClientProxy implements InvocationHandler {
 		}
 		catch (Exception e) {
 			logger.fatal(e);
+			e.printStackTrace();
 			throw new RuntimeException("unexpected invocation exception: "
 					+ e.getMessage());
 		}
@@ -73,27 +74,15 @@ public class HttpClientProxy implements InvocationHandler {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(baos);
 		oos.writeObject(args);
+		oos.flush();
+		oos.close();
+		baos.flush();
+		baos.close();
 
 		PostMethod post = new PostMethod(this.url.toString());
-		post.setRequestEntity(new ByteArrayRequestEntity(baos.toByteArray()));
 
 		post.addParameter(SimContants.PARAMETER_METHOD, method.getName());
-		this.parseParamaters(method, post);
 
-		HttpClient httpclient = new HttpClient();
-		httpclient.executeMethod(post);
-		byte[] response = post.getResponseBody();
-
-		ByteArrayInputStream bais = new ByteArrayInputStream(response);
-		ObjectInputStream ois = new ObjectInputStream(bais);
-		Object result = ois.readObject();
-
-		post.releaseConnection();
-
-		return result;
-	}
-
-	private void parseParamaters(Method method, PostMethod post) {
 		StringBuffer params = new StringBuffer();
 		for (Class param : method.getParameterTypes()) {
 			params.append(param + ",");
@@ -102,5 +91,17 @@ public class HttpClientProxy implements InvocationHandler {
 			String parameters = params.toString();
 			post.addParameter(SimContants.PARAMETER_TYPES, parameters);
 		}
+		post.setRequestBody(baos.toString());
+
+		HttpClient httpclient = new HttpClient();
+		httpclient.executeMethod(post);
+
+		ObjectInputStream ois = new ObjectInputStream(post.getResponseBodyAsStream());
+		Object result = ois.readObject();
+		ois.close();
+
+		post.releaseConnection();
+
+		return result;
 	}
 }
