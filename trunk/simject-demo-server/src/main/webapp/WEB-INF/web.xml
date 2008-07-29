@@ -6,7 +6,7 @@
 	<display-name>simject demo server</display-name>
 	<servlet>
 		<servlet-name>remote</servlet-name>
-		<servlet-class>org.simject.remote.SimServerServlet</servlet-class>
+		<servlet-class>org.simject.remote.server.SimServerServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>remote</servlet-name>
