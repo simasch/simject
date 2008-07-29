@@ -4,7 +4,6 @@
 	<artifactId>simject-demo-server</artifactId>
 	<packaging>war</packaging>
 	<name>simject-demo-server Maven Webapp</name>
-	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
