@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+	<properties>
+		<title>simject</title>
+		<author email="simon@martinelli.ch">Simon Martinelli</author>
+	</properties>
+	<body>
+		<release version="1.0.0" date="2008-07-30" description="first version">
+			<action dev="simon.martinelli" type="add">first release of simject</action>
+		</release>
+	</body>
+</document>

@@ -1,14 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.simject</groupId>
 	<artifactId>simject-factory</artifactId>
 	<packaging>jar</packaging>
 	<name>simject-factory</name>
 	<version>1.0.5-SNAPSHOT</version>
-	<description>simple dependency injection</description>
+	<description>If you are looking for a simple IOC container with JPA
+		and remoting support - try simject! More information can be found at
+		Google Code project site</description>
 	<url>http://www.simject.org/</url>
 	<issueManagement>
-		<system>Google Code Issues</system>
+		<system>Google Code</system>
 		<url>http://code.google.com/p/simject/issues/list</url>
 	</issueManagement>
 	<developers>
@@ -16,6 +19,7 @@
 			<id>simon.martinelli</id>
 			<name>Simon Martinelli</name>
 			<email>simon@martinelli.ch</email>
+			<url>http://simonmartinelli.blogspot.com</url>
 		</developer>
 	</developers>
 	<licenses>
@@ -25,14 +29,17 @@
 			<distribution>manual</distribution>
 		</license>
 	</licenses>
+	<properties>
+		<java.version>1.5</java.version>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -139,9 +146,34 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.0</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>changes-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<targetJdk>${java.version}</targetJdk>
+					<linkXref>true</linkXref>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+			</plugin>
 			<!--
 				plugin> <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changelog-plugin</artifactId> </plugin -->
+				<artifactId>maven-changelog-plugin</artifactId> </plugin
+			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -153,14 +185,14 @@
 	</scm>
 	<distributionManagement>
 		<repository>
-		  <id>releases</id>
-		  <name>Internal Releases</name>
-		  <url>http://localhost:8081/nexus/content/repositories/releases</url>
+			<id>releases</id>
+			<name>Internal Releases</name>
+			<url>http://localhost:8081/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
-		  <id>snapshots</id>
-		  <name>Internal Snapshots</name>
-		  <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+			<id>snapshots</id>
+			<name>Internal Snapshots</name>
+			<url>http://localhost:8081/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
-  </distributionManagement>
+	</distributionManagement>
 </project>
