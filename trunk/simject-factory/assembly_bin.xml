@@ -1,15 +1,16 @@
 <assembly>
 	<id>bin</id>
 	<formats>
-		<format>dir</format>
+		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
-	<moduleSets>
-		<moduleSet>
-			<binaries>
-				<outputDirectory>lib</outputDirectory>
-				<unpack>false</unpack>
-			</binaries>
-		</moduleSet>
-	</moduleSets>
+	<dependencySets>
+		<dependencySet>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<excludes>
+				<exclude>junit:junit</exclude>
+			</excludes>
+		</dependencySet>
+	</dependencySets>
 </assembly>
