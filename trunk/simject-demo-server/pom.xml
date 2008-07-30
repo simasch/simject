@@ -18,7 +18,7 @@
 	<parent>
 		<artifactId>simject-parent</artifactId>
 		<groupId>org.simject</groupId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.3</version>
 	</parent>
 	<build>
 		<finalName>simject-demo-server</finalName>
