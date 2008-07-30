@@ -20,6 +20,8 @@ public class DemoClient {
 		employee.setName("Simon Martinelli");
 		
 		logger.info(service.getHello(employee));
+		
+		service.find("Peter", 20);
 	}
 
 }

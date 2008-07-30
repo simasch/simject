@@ -129,7 +129,10 @@ public class HttpClientProxy implements InvocationHandler {
 
 		logger.debug(post.getResponseBodyAsString());
 
-		Object result = xstream.fromXML(post.getResponseBodyAsString());
+		Object result = null;
+		if (post.getResponseContentLength() > 0) {
+			result = xstream.fromXML(post.getResponseBodyAsString());
+		}
 
 		post.releaseConnection();
 

@@ -81,7 +81,7 @@ public class SimServerServlet extends HttpServlet {
 			Object obj = this.simFactory.getResource(clazz);
 			// get the arguments passed by the client and invoke the desired
 			// method
-			Object args = this.getArguments(req);
+			Object[] args = this.getArguments(req);
 			this.invokeMethod(req, resp, obj, args);
 		}
 		catch (Exception e) {
@@ -106,7 +106,7 @@ public class SimServerServlet extends HttpServlet {
 	 * @throws SecurityException
 	 */
 	private void invokeMethod(HttpServletRequest req, HttpServletResponse resp,
-			Object obj, Object args) throws IllegalAccessException,
+			Object obj, Object[] args) throws IllegalAccessException,
 			InvocationTargetException, IOException, ClassNotFoundException,
 			SecurityException, NoSuchMethodException {
 
@@ -131,14 +131,6 @@ public class SimServerServlet extends HttpServlet {
 			Method method = obj.getClass().getMethod(methodString,
 					parameterTypes);
 
-			if (args instanceof Object[]) {
-				// TODO problem with Object[] and variabel parameter list. Don't
-				// know how to convert correctly!
-				Object[] objects = (Object[]) args;
-				if (objects.length == 1) {
-					args = objects[0];
-				}
-			}
 			logger.debug("args: " + args);
 			result = method.invoke(obj, args);
 		}
@@ -186,7 +178,7 @@ public class SimServerServlet extends HttpServlet {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Object getArguments(HttpServletRequest req) throws IOException,
+	private Object[] getArguments(HttpServletRequest req) throws IOException,
 			ClassNotFoundException {
 
 		String xml = this.inputStreamToString(req.getInputStream());
@@ -195,14 +187,14 @@ public class SimServerServlet extends HttpServlet {
 		XStream xstream = new XStream();
 		Object args = xstream.fromXML(xml);
 
-		return args;
+		return (Object[]) args;
 	}
 
 	/**
-	 * Helper Method to convert InputStream to String 
+	 * Helper Method to convert InputStream to String
 	 * 
 	 * @param in
-	 * @return 
+	 * @return
 	 * @throws IOException
 	 */
 	private String inputStreamToString(InputStream in) throws IOException {

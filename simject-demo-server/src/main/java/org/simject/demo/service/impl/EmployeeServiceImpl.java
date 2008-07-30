@@ -14,4 +14,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public String getHello(Employee employee) {
 		return this.employeeManager.getHello(employee);
 	}
+
+	public void find(String name, Integer age) {
+		
+	}
 }
