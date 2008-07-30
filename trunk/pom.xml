@@ -4,13 +4,13 @@
 	<artifactId>simject-super-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>simject-super-parent</name>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<modules>
 		<module>simject-parent</module>
 	</modules>
 	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn</developerConnection>
+		<connection>scm:svn:https://simject.googlecode.com/svn/tags/1.0.0</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/tags/1.0.0</developerConnection>
 	</scm>
 	<distributionManagement>
     <repository>
