@@ -3,7 +3,7 @@
 	<groupId>org.simject</groupId>
 	<artifactId>simject-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>simject-parent</name>
 	<url>http://www.simject.org</url>
 	<build>
@@ -123,8 +123,8 @@
 		</plugins>
 	</reporting>
 	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn/simject-parent/tags/1.0.0/simject-parent</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-parent/tags/1.0.0/simject-parent</developerConnection>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-parent</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-parent</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
