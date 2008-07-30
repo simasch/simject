@@ -30,8 +30,4 @@
 			<version>5.1.6</version>
 		</dependency>
 	</dependencies>
-	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn/simject-demo-fatjpaclient</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-demo-fatjpaclient</developerConnection>
-	</scm>
 </project>
