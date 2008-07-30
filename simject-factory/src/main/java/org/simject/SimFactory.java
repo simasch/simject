@@ -51,11 +51,6 @@ public class SimFactory {
 	private static final Logger logger = Logger.getLogger(SimFactory.class);
 
 	/**
-	 * Holds the filenames
-	 */
-	private String[] fileNames;
-
-	/**
 	 * Container holding all configured resources
 	 */
 	@SuppressWarnings("unchecked")
@@ -67,11 +62,8 @@ public class SimFactory {
 	 * @param fileNames
 	 */
 	public SimFactory(String... fileNames) {
-		this.fileNames = new String[fileNames.length];
 
-		int i = 0;
 		for (String fileName : fileNames) {
-			this.fileNames[i] = fileName;
 			this.loadXmlConfig(fileName);
 		}
 		this.injectDependencies();
