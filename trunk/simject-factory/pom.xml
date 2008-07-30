@@ -8,6 +8,17 @@
 	<version>1.0.1-SNAPSHOT</version>
 	<description>simple dependency injection</description>
 	<url>http://www.simject.org/</url>
+	<issueManagement>
+		<system>Google Code Issues</system>
+		<url>http://code.google.com/p/simject/issues/list</url>
+	</issueManagement>
+	<developers>
+		<developer>
+			<id>simon.martinelli</id>
+			<name>Simon Martinelli</name>
+			<email>simon@martinelli.ch</email>
+		</developer>
+	</developers>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
