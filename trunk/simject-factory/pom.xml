@@ -4,7 +4,7 @@
 	<artifactId>simject-factory</artifactId>
 	<packaging>jar</packaging>
 	<name>simject-factory</name>
-	<version>1.0.3</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<description>simple dependency injection</description>
 	<url>http://www.simject.org/</url>
 	<issueManagement>
@@ -149,7 +149,7 @@
 		</plugins>
 	</reporting>
 	<scm>
-		<url>http://simject.googlecode.com/svn/tags/1.0.3</url>
+		<url>http://simject.googlecode.com/svn/trunk/</url>
 	</scm>
 	<distributionManagement>
 		<repository>
