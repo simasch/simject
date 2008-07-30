@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>simject-parent</artifactId>
 		<groupId>org.simject</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<dependencies>
 		<dependency>
@@ -31,7 +31,7 @@
 		</dependency>
 	</dependencies>
 	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn/simject-demo-fatjpaclient/tags/1.0.0/simject-demo-fatjpaclient</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-demo-fatjpaclient/tags/1.0.0/simject-demo-fatjpaclient</developerConnection>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-demo-fatjpaclient</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-demo-fatjpaclient</developerConnection>
 	</scm>
 </project>

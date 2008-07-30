@@ -7,10 +7,10 @@
 	<parent>
 		<artifactId>simject-parent</artifactId>
 		<groupId>org.simject</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn/simject-interface/tags/1.0.0/simject-interface</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-interface/tags/1.0.0/simject-interface</developerConnection>
+		<connection>scm:svn:https://simject.googlecode.com/svn/simject-interface</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/simject-interface</developerConnection>
 	</scm>
 </project>
