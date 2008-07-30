@@ -12,4 +12,16 @@
 		<connection>scm:svn:https://simject.googlecode.com/svn</connection>
 		<developerConnection>scm:svn:https://simject.googlecode.com/svn</developerConnection>
 	</scm>
+	<distributionManagement>
+		<repository>
+		  <id>releases</id>
+		  <name>Internal Releases</name>
+		  <url>http://localhost:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+		  <id>snapshots</id>
+		  <name>Internal Snapshots</name>
+		  <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+  </distributionManagement>
 </project>
