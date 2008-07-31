@@ -16,7 +16,7 @@
 		</dependency>
 	</dependencies>
 	<parent>
-		<artifactId>simject-parent</artifactId>
+		<artifactId>simject-demo-parent</artifactId>
 		<groupId>org.simject</groupId>
 		<version>1.0.5-SNAPSHOT</version>
 	</parent>
