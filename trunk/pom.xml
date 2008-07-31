@@ -6,7 +6,8 @@
 	<name>simject-super-parent</name>
 	<version>1.0.5-SNAPSHOT</version>
 	<modules>
-		<module>simject-parent</module>
+		<module>simject</module>
+		<module>simject-demo-parent</module>
 	</modules>
 	<scm>
 		<connection>scm:svn:https://simject.googlecode.com/svn</connection>
