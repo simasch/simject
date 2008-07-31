@@ -3,7 +3,7 @@
     <useProjectRuleSet>false</useProjectRuleSet>
     <ruleSetFile>.ruleset</ruleSetFile>
     <excludePatterns>
-        <excludePattern>*jaxb*</excludePattern>
+        <excludePattern>.*/jaxb/.*</excludePattern>
     </excludePatterns>
     <rules>
         <rule>
