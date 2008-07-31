@@ -6,9 +6,7 @@
 	<packaging>jar</packaging>
 	<name>simject</name>
 	<version>1.0.6-SNAPSHOT</version>
-	<description>If you are looking for a simple IOC container with JPA
-		and remoting support - try simject! More information can be found at
-		Google Code project site</description>
+	<description>If you are looking for a simple IOC container with JPA	and remoting support - try simject!</description>
 	<url>http://www.simject.org/</url>
 	<issueManagement>
 		<system>Google Code</system>
