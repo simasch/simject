@@ -16,6 +16,11 @@ public class SimFactoryTest {
 
 	private static final Logger logger = Logger.getLogger(SimFactoryTest.class);
 
+	/**
+	 * Positive test using a class
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSimFactory() throws Exception {
 
@@ -27,6 +32,11 @@ public class SimFactoryTest {
 		assertNotNull("Class not found", testClass);
 	}
 
+	/**
+	 * Positiv test using an interface
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSimFactoryWithInterface() throws Exception {
 
@@ -39,8 +49,13 @@ public class SimFactoryTest {
 		assertNotNull("Interface not found", testInterface);
 	}
 
+	/**
+	 * Negativ test with wrong class
+	 * 
+	 * @throws Exception
+	 */
 	@Test
-	public void testSimFactoryNotFound() throws Exception {
+	public void testSimFactoryClassNotFound() throws Exception {
 
 		try {
 			final SimFactory factory = new SimFactory(RESOURCES_XML);
@@ -58,6 +73,33 @@ public class SimFactoryTest {
 		}
 	}
 
+	/**
+	 * Negativ test with wrong config file name
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testSimFactoryConfigFileNotFound() throws Exception {
+
+		try {
+			final SimFactory factory = new SimFactory("abc");
+			final TestNotFoundInterface tnfi = factory
+					.getResource(TestNotFoundInterface.class);
+			tnfi.getClass();
+
+			fail();
+		}
+		catch (Exception e) {
+			assertEquals("Exception not as expected", "META-INF/abc not found",
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * Generall DI test
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testDependencyInjection() throws Exception {
 

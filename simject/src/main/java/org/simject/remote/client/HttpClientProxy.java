@@ -43,20 +43,20 @@ public final class HttpClientProxy implements InvocationHandler {
 			.getLogger(HttpClientProxy.class);
 
 	/**
-	 * Holds the URL
+	 * Holds the requested URL
 	 */
 	final private URL url;
 
 	/**
-	 * Factory Method for creation
+	 * Factory method for creation
 	 * 
 	 * @param loader
 	 * @param interfaces
 	 * @param url
 	 * @return an instance of HttpClientProxy
 	 */
-	public static Object newInstance(final ClassLoader loader, final Class<?>[] interfaces,
-			final URL url) {
+	public static Object newInstance(final ClassLoader loader,
+			final Class<?>[] interfaces, final URL url) {
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
 				new HttpClientProxy(url));
 	}
@@ -71,8 +71,8 @@ public final class HttpClientProxy implements InvocationHandler {
 	}
 
 	@Override
-	public Object invoke(final Object proxy, final Method method, final Object[] args)
-			throws Throwable {
+	public Object invoke(final Object proxy, final Method method,
+			final Object[] args) throws Throwable {
 		Object result;
 		try {
 			result = this.invokeUrl(method, args);
@@ -89,8 +89,9 @@ public final class HttpClientProxy implements InvocationHandler {
 	/**
 	 * Synchronous call over HTTP
 	 * 
-	 * 1. Serializes the argumens and make a remot call to the desired method.
-	 * 2. Deserializes the response from the server.
+	 * 1. Serializes the arguments to XML using XStream and make a remote call
+	 * over HTTP with Commons HttpClient to the desired method. 2. Deserializes
+	 * the XML response from the server.
 	 * 
 	 * @param method
 	 * @param args
@@ -98,8 +99,8 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Object invokeUrl(final Method method, final Object[] args) throws IOException,
-			ClassNotFoundException {
+	private Object invokeUrl(final Method method, final Object[] args)
+			throws IOException, ClassNotFoundException {
 
 		final XStream xstream = new XStream();
 		final String xml = xstream.toXML(args);
@@ -109,13 +110,16 @@ public final class HttpClientProxy implements InvocationHandler {
 				SimContants.CONTENT_TYPE_XML);
 		post.setRequestEntity(req);
 
+		// The method name and the parameter types are set to the header
 		final Header headerMethod = new Header(SimContants.PARAM_METHOD, method
 				.getName());
 		post.addRequestHeader(headerMethod);
 
+		// Get all parameter types and add them to a string delimited by ,
 		final StringBuffer params = new StringBuffer();
 		for (Class<?> param : method.getParameterTypes()) {
-			final String paramString = param.getName() + SimContants.PARAM_TYPE_DELIM;
+			final String paramString = param.getName()
+					+ SimContants.PARAM_TYPE_DELIM;
 			params.append(paramString);
 		}
 		if (params.length() > 0) {
@@ -130,6 +134,7 @@ public final class HttpClientProxy implements InvocationHandler {
 
 		logger.debug(post.getResponseBodyAsString());
 
+		// Get response if the content is > 0
 		Object result = null;
 		if (post.getResponseContentLength() > 0) {
 			result = xstream.fromXML(post.getResponseBodyAsString());

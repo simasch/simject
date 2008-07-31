@@ -49,7 +49,7 @@ public class SimServerServlet extends HttpServlet {
 	private final static String SIMJECT_CONFIG = "simjectConfig";
 
 	/**
-	 * SimFactory
+	 * Reference to the SimFactory
 	 */
 	private SimFactory simFactory;
 
@@ -118,7 +118,7 @@ public class SimServerServlet extends HttpServlet {
 			result = method.invoke(obj);
 		}
 		else {
-			// method with parameters should be called. convert the string from
+			// method with parameters should be called. Converts the string from
 			// the header to Class array
 			final Class<?>[] parameterTypes = this
 					.getParameterTypes(paramTypesString);

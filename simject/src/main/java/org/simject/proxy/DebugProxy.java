@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.simject.exception.SimException;
 
 /**
- * Used to provide remote access over HTTP to a resource
+ * Example Proxy to do some debugging
  * 
  * @author Simon Martinelli
  */

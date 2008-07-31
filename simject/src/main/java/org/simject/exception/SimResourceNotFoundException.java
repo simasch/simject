@@ -16,6 +16,8 @@
 package org.simject.exception;
 
 /**
+ * This exception is throw if a client tries to access a resource that is not
+ * configured
  * 
  * @author Simon Martinelli
  */

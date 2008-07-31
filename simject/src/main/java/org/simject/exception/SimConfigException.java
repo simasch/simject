@@ -16,6 +16,7 @@
 package org.simject.exception;
 
 /**
+ * This exception is thrown on configuration errors
  * 
  * @author Simon Martinelli
  */

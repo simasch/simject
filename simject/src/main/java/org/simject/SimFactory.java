@@ -53,8 +53,7 @@ public class SimFactory {
 	/**
 	 * Container holding all configured resources
 	 */
-	@SuppressWarnings("unchecked")
-	final private Map<Class, Object> resourceMap = new HashMap<Class, Object>();
+	final private Map<Class<?>, Object> resourceMap = new HashMap<Class<?>, Object>();
 
 	/**
 	 * Constructor that takes 0-n configuration files
@@ -134,23 +133,25 @@ public class SimFactory {
 	 * @throws IllegalAccessException
 	 * @throws MalformedURLException
 	 */
-	@SuppressWarnings("unchecked")
 	private void createResource(final Resource resource)
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, MalformedURLException {
 
 		final String className = resource.getType();
-		final Class clazz = Class.forName(className);
+		final Class<?> clazz = Class.forName(className);
 
 		Object obj = null;
 		if (resource.getType().equals(EntityManager.class.getName())) {
+			// type is EntityManager
 			obj = this.createEntityManager(resource);
 		}
 		else if (resource.getTarget() != null
 				&& resource.getTarget().startsWith("http")) {
+			// target is an url
 			obj = this.createHttpClientProxy(clazz, resource.getTarget());
 		}
 		else {
+			// any other will create a POJO instance
 			obj = this.createPojo(resource, clazz);
 		}
 		this.resourceMap.put(clazz, obj);
@@ -177,7 +178,7 @@ public class SimFactory {
 	}
 
 	/**
-	 * Creates an simple POJO
+	 * Creates a simple POJO instance
 	 * 
 	 * @param resource
 	 * @param clazz
@@ -234,7 +235,6 @@ public class SimFactory {
 			throw new InstantiationException(
 					"Can not instantiate a interface. Please check configuration");
 		}
-
 		return clazz.newInstance();
 	}
 
