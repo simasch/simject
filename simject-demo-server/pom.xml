@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>simject-demo-server</artifactId>
 	<packaging>war</packaging>
-	<name>simject-demo-server Maven Webapp</name>
+	<name>simject-demo-server</name>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
