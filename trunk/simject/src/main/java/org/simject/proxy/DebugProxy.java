@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.log4j.Logger;
 import org.simject.exception.SimException;
 
 /**
@@ -28,7 +29,9 @@ import org.simject.exception.SimException;
  */
 public final class DebugProxy implements InvocationHandler {
 
-	final private Object obj;
+	private final static Logger logger = Logger.getLogger(DebugProxy.class);
+
+	private final Object obj;
 
 	public static Object newInstance(final Object obj) {
 		return java.lang.reflect.Proxy.newProxyInstance(obj.getClass()
@@ -41,11 +44,11 @@ public final class DebugProxy implements InvocationHandler {
 	}
 
 	@Override
-	public Object invoke(final Object proxy, final Method method, final Object[] args)
-			throws Throwable {
+	public Object invoke(final Object proxy, final Method method,
+			final Object[] args) throws Throwable {
 		Object result;
 		try {
-			System.out.println("before method " + method.getName());
+			logger.debug("before method " + method.getName());
 			result = method.invoke(obj, args);
 		}
 		catch (InvocationTargetException e) {
@@ -56,7 +59,7 @@ public final class DebugProxy implements InvocationHandler {
 					+ e.getMessage(), e);
 		}
 		finally {
-			System.out.println("after method " + method.getName());
+			logger.debug("after method " + method.getName());
 		}
 		return result;
 	}

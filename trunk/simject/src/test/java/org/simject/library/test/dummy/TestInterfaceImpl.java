@@ -2,7 +2,12 @@ package org.simject.library.test.dummy;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
+
 public class TestInterfaceImpl implements TestInterface {
+
+	private final static Logger logger = Logger
+			.getLogger(TestInterfaceImpl.class);
 
 	@Resource
 	private TestClass testClass;
@@ -13,6 +18,6 @@ public class TestInterfaceImpl implements TestInterface {
 
 	@Override
 	public void sayHello() {
-		System.out.println("Hello World");
+		logger.info("Hello World");
 	}
 }
