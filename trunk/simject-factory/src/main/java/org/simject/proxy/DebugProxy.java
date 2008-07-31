@@ -19,27 +19,29 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.simject.exception.SimException;
+
 /**
  * Used to provide remote access over HTTP to a resource
  * 
  * @author Simon Martinelli
  */
-public class DebugProxy implements InvocationHandler {
+public final class DebugProxy implements InvocationHandler {
 
-	private Object obj;
-	
-	public static Object newInstance(Object obj) {
+	final private Object obj;
+
+	public static Object newInstance(final Object obj) {
 		return java.lang.reflect.Proxy.newProxyInstance(obj.getClass()
 				.getClassLoader(), obj.getClass().getInterfaces(),
 				new DebugProxy(obj));
 	}
 
-	private DebugProxy(Object obj) {
+	private DebugProxy(final Object obj) {
 		this.obj = obj;
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args)
+	public Object invoke(final Object proxy, final Method method, final Object[] args)
 			throws Throwable {
 		Object result;
 		try {
@@ -50,8 +52,8 @@ public class DebugProxy implements InvocationHandler {
 			throw e.getTargetException();
 		}
 		catch (Exception e) {
-			throw new RuntimeException("unexpected invocation exception: "
-					+ e.getMessage());
+			throw new SimException("unexpected invocation exception: "
+					+ e.getMessage(), e);
 		}
 		finally {
 			System.out.println("after method " + method.getName());

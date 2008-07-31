@@ -37,6 +37,7 @@ import com.thoughtworks.xstream.XStream;
  * 
  * @author Simon Martinelli
  */
+@SuppressWarnings("serial")
 public class SimServerServlet extends HttpServlet {
 
 	private final static Logger logger = Logger
@@ -55,25 +56,25 @@ public class SimServerServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		// Get the context parameter with the config file
-		String configFile = (String) this.getServletContext().getInitParameter(
+		final String configFile = (String) this.getServletContext().getInitParameter(
 				SIMJECT_CONFIG);
 		// create a SimFactory based on the config file
 		simFactory = new SimFactory(configFile);
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+	protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
 			throws ServletException, IOException {
 
 		try {
 			// get the classname, create a Class instance and get the resource
 			// from the SimFactory
-			String className = this.getClassName(req);
-			Class clazz = Class.forName(className);
-			Object obj = this.simFactory.getResource(clazz);
+			final String className = this.getClassName(req);
+			final Class<?> clazz = Class.forName(className);
+			final Object obj = this.simFactory.getResource(clazz);
 			// get the arguments passed by the client and invoke the desired
 			// method
-			Object[] args = this.getArguments(req);
+			final Object[] args = this.getArguments(req);
 			this.invokeMethod(req, resp, obj, args);
 		}
 		catch (Exception e) {
@@ -97,30 +98,30 @@ public class SimServerServlet extends HttpServlet {
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
 	 */
-	private void invokeMethod(HttpServletRequest req, HttpServletResponse resp,
-			Object obj, Object[] args) throws IllegalAccessException,
+	private void invokeMethod(final HttpServletRequest req, final HttpServletResponse resp,
+			final Object obj, final Object[] args) throws IllegalAccessException,
 			InvocationTargetException, IOException, ClassNotFoundException,
 			SecurityException, NoSuchMethodException {
 
 		// get the method name from the HTTP header
-		String methodString = req.getHeader(SimContants.PARAMETER_METHOD);
+		final String methodString = req.getHeader(SimContants.PARAM_METHOD);
 		logger.debug("methodString: " + methodString);
 		// get the parameter types from the HTTP header
-		String parameterTypesString = req
-				.getHeader(SimContants.PARAMETER_TYPES);
+		final String paramTypesString = req
+				.getHeader(SimContants.PARAM_TYPES);
 
 		Object result = null;
-		if (parameterTypesString == null) {
+		if (paramTypesString == null) {
 			// method without parameters to invoke
-			Method method = obj.getClass().getMethod(methodString);
+			final Method method = obj.getClass().getMethod(methodString);
 			result = method.invoke(obj);
 		}
 		else {
 			// method with parameters should be called. convert the string from
 			// the header to Class array
-			Class[] parameterTypes = this
-					.getParameterTypes(parameterTypesString);
-			Method method = obj.getClass().getMethod(methodString,
+			final Class<?>[] parameterTypes = this
+					.getParameterTypes(paramTypesString);
+			final Method method = obj.getClass().getMethod(methodString,
 					parameterTypes);
 
 			logger.debug("args: " + args);
@@ -128,8 +129,8 @@ public class SimServerServlet extends HttpServlet {
 		}
 		if (result != null) {
 			// if there is a result use XStream to serialize it to XML
-			XStream xstream = new XStream();
-			String xml = xstream.toXML(result);
+			final XStream xstream = new XStream();
+			final String xml = xstream.toXML(result);
 			resp.getWriter().write(xml);
 		}
 	}
@@ -141,22 +142,22 @@ public class SimServerServlet extends HttpServlet {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	private Class[] getParameterTypes(String parameterString)
+	private Class<?>[] getParameterTypes(final String parameterString)
 			throws ClassNotFoundException {
-		Class[] parameters = new Class[0];
+		Class<?>[] parameters = new Class[0];
 		if (parameterString != null) {
 			// The parameter types are seperated by ","
-			StringTokenizer st = new StringTokenizer(parameterString,
-					SimContants.PARAMETER_TYPE_DELIMITER);
-			parameters = new Class[st.countTokens()];
-			int i = 0;
-			while (st.hasMoreTokens()) {
-				String className = st.nextToken();
+			final StringTokenizer stokenizer = new StringTokenizer(parameterString,
+					SimContants.PARAM_TYPE_DELIM);
+			parameters = new Class[stokenizer.countTokens()];
+			int index = 0;
+			while (stokenizer.hasMoreTokens()) {
+				final String className = stokenizer.nextToken();
 				logger.debug("parameterTyp: " + className);
 
-				Class clazz = Class.forName(className);
-				parameters[i] = clazz;
-				i++;
+				final Class<?> clazz = Class.forName(className);
+				parameters[index] = clazz;
+				index++;
 			}
 		}
 		return parameters;
@@ -170,14 +171,14 @@ public class SimServerServlet extends HttpServlet {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Object[] getArguments(HttpServletRequest req) throws IOException,
+	private Object[] getArguments(final HttpServletRequest req) throws IOException,
 			ClassNotFoundException {
 
-		String xml = this.inputStreamToString(req.getInputStream());
+		final String xml = this.inputStreamToString(req.getInputStream());
 		logger.debug(xml);
 
-		XStream xstream = new XStream();
-		Object args = xstream.fromXML(xml);
+		final XStream xstream = new XStream();
+		final Object args = xstream.fromXML(xml);
 
 		return (Object[]) args;
 	}
@@ -189,11 +190,11 @@ public class SimServerServlet extends HttpServlet {
 	 * @return
 	 * @throws IOException
 	 */
-	private String inputStreamToString(InputStream in) throws IOException {
-		StringBuffer out = new StringBuffer();
-		byte[] b = new byte[4096];
-		for (int n; (n = in.read(b)) != -1;) {
-			out.append(new String(b, 0, n));
+	private String inputStreamToString(final InputStream istream) throws IOException {
+		final StringBuffer out = new StringBuffer();
+		final byte[] bytes = new byte[4096];
+		for (int n; (n = istream.read(bytes)) != -1;) {
+			out.append(new String(bytes, 0, n));
 		}
 		return out.toString();
 	}
@@ -204,21 +205,20 @@ public class SimServerServlet extends HttpServlet {
 	 * @param req
 	 * @return
 	 */
-	private String getClassName(HttpServletRequest req) {
-		StringTokenizer st = new StringTokenizer(req.getPathInfo(), "/");
-		String[] tokens = new String[st.countTokens()];
-		int i = 0;
-		while (st.hasMoreTokens()) {
-			tokens[i] = st.nextToken();
-			logger.debug("path token: " + tokens[i]);
-			i++;
+	private String getClassName(final HttpServletRequest req) {
+		final StringTokenizer stokenzier = new StringTokenizer(req.getPathInfo(), "/");
+		String[] tokens = new String[stokenzier.countTokens()];
+		int index = 0;
+		while (stokenzier.hasMoreTokens()) {
+			tokens[index] = stokenzier.nextToken();
+			logger.debug("path token: " + tokens[index]);
+			index++;
 		}
-		String className = tokens[0];
-		return className;
+		return tokens[0];
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 			throws ServletException, IOException {
 		this.doPost(req, resp);
 	}

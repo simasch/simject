@@ -54,14 +54,14 @@ public class SimFactory {
 	 * Container holding all configured resources
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<Class, Object> resourceMap = new HashMap<Class, Object>();
+	final private Map<Class, Object> resourceMap = new HashMap<Class, Object>();
 
 	/**
 	 * Constructor that takes 0-n configuration files
 	 * 
 	 * @param fileNames
 	 */
-	public SimFactory(String... fileNames) {
+	public SimFactory(final String... fileNames) {
 
 		for (String fileName : fileNames) {
 			this.loadXmlConfig(fileName);
@@ -79,10 +79,11 @@ public class SimFactory {
 	 *            must be the type configured in the config file
 	 * @return an instance of the desired type
 	 */
-	public <T> T getResource(Class<T> clazz) {
-		Object obj = this.resourceMap.get(clazz);
+	@SuppressWarnings("unchecked")
+	public <T> T getResource(final Class<T> clazz) {
+		final Object obj = this.resourceMap.get(clazz);
 		if (obj == null) {
-			String message = "Resource of type " + clazz.getName()
+			final String message = "Resource of type " + clazz.getName()
 					+ " not found";
 			logger.fatal(message);
 			throw new SimResourceNotFoundException(message);
@@ -95,24 +96,26 @@ public class SimFactory {
 	 * 
 	 * @param fileName
 	 */
-	private void loadXmlConfig(String fileName) {
+	private void loadXmlConfig(final String fileName) {
 		try {
-			JAXBContext jc = JAXBContext.newInstance("org.simject.jaxb");
-			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			final JAXBContext jcontext = JAXBContext
+					.newInstance("org.simject.jaxb");
+			final Unmarshaller unmarshaller = jcontext.createUnmarshaller();
 
-			InputStream is = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream(
+			final InputStream istream = Thread.currentThread()
+					.getContextClassLoader().getResourceAsStream(
 							SimContants.DEFAULT_DIRECTORY + fileName);
 
-			if (is != null) {
-				Resources resources = (Resources) unmarshaller.unmarshal(is);
+			if (istream == null) {
+				throw new FileNotFoundException(SimContants.DEFAULT_DIRECTORY
+						+ fileName + " not found");
+			}
+			else {
+				final Resources resources = (Resources) unmarshaller
+						.unmarshal(istream);
 				for (Resource resource : resources.getResource()) {
 					this.createResource(resource);
 				}
-			}
-			else {
-				throw new FileNotFoundException(SimContants.DEFAULT_DIRECTORY
-						+ fileName + " not found");
 			}
 		}
 		catch (Exception e) {
@@ -132,11 +135,12 @@ public class SimFactory {
 	 * @throws MalformedURLException
 	 */
 	@SuppressWarnings("unchecked")
-	private void createResource(Resource resource)
+	private void createResource(final Resource resource)
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, MalformedURLException {
-		String className = resource.getType();
-		Class clazz = Class.forName(className);
+
+		final String className = resource.getType();
+		final Class clazz = Class.forName(className);
 
 		Object obj = null;
 		if (resource.getType().equals(EntityManager.class.getName())) {
@@ -161,11 +165,11 @@ public class SimFactory {
 	 * @return
 	 * @throws MalformedURLException
 	 */
-	private Object createHttpClientProxy(Class clazz, String target)
+	private Object createHttpClientProxy(final Class<?> clazz, final String target)
 			throws MalformedURLException {
 		Object obj = null;
 
-		URL url = new URL(target);
+		final URL url = new URL(target);
 		obj = HttpClientProxy.newInstance(Thread.currentThread()
 				.getContextClassLoader(), new Class[] { clazz }, url);
 
@@ -182,7 +186,7 @@ public class SimFactory {
 	 * @throws IllegalAccessException
 	 * @throws ClassNotFoundException
 	 */
-	private Object createPojo(Resource resource, Class clazz)
+	private Object createPojo(final Resource resource, final Class<?> clazz)
 			throws InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
 		Object obj;
@@ -190,8 +194,8 @@ public class SimFactory {
 			obj = createInstance(clazz);
 		}
 		else {
-			String realizedby = resource.getTarget();
-			Class realizedbyClazz = Class.forName(realizedby);
+			final String realizedby = resource.getTarget();
+			final Class<?> realizedbyClazz = Class.forName(realizedby);
 			obj = createInstance(realizedbyClazz);
 		}
 		return obj;
@@ -203,16 +207,15 @@ public class SimFactory {
 	 * @param resource
 	 * @return
 	 */
-	private Object createEntityManager(Resource resource) {
+	private Object createEntityManager(final Resource resource) {
 
-		Map<String, String> props = new HashMap<String, String>();
+		final Map<String, String> props = new HashMap<String, String>();
 		for (Property property : resource.getProperty()) {
 			props.put(property.getName(), property.getValue());
 		}
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory(
+		final EntityManagerFactory emf = Persistence.createEntityManagerFactory(
 				resource.getName(), props);
-		Object obj = emf.createEntityManager();
-		return obj;
+		return emf.createEntityManager();
 	}
 
 	/**
@@ -224,15 +227,15 @@ public class SimFactory {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	private Object createInstance(Class clazz) throws InstantiationException,
+	private Object createInstance(final Class<?> clazz) throws InstantiationException,
 			IllegalAccessException {
 
 		if (clazz.isInterface()) {
 			throw new InstantiationException(
 					"Can not instantiate a interface. Please check configuration");
 		}
-		Object obj = clazz.newInstance();
-		return obj;
+
+		return clazz.newInstance();
 	}
 
 	/**
@@ -241,14 +244,14 @@ public class SimFactory {
 	private void injectDependencies() {
 		try {
 			for (Object obj : this.resourceMap.values()) {
-				Field[] fields = obj.getClass().getDeclaredFields();
+				final Field[] fields = obj.getClass().getDeclaredFields();
 				for (Field field : fields) {
-					Annotation[] annotations = field.getDeclaredAnnotations();
+					final Annotation[] annotations = field.getDeclaredAnnotations();
 					for (Annotation annotation : annotations) {
 						if (annotation.annotationType().equals(
 								javax.annotation.Resource.class)) {
-							Class clazz = field.getType();
-							Object value = this.resourceMap.get(clazz);
+							final Class<?> clazz = field.getType();
+							final Object value = this.resourceMap.get(clazz);
 							field.setAccessible(true);
 							field.set(obj, value);
 						}
