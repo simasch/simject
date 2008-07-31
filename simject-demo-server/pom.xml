@@ -11,7 +11,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>simject-factory</artifactId>
+			<artifactId>simject</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
