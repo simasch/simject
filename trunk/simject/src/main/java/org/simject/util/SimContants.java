@@ -20,7 +20,7 @@ package org.simject.util;
  * 
  * @author Simon Martinelli
  */
-public class SimContants {
+public final class SimContants {
 
 	public final static String DEFAULT_DIRECTORY = "META-INF/";
 

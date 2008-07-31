@@ -16,7 +16,7 @@
 package org.simject.exception;
 
 /**
- * Super simject Exception 
+ * simject's base Exception 
  * 
  * @author Simon Martinelli
  */
