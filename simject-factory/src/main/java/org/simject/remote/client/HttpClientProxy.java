@@ -26,6 +26,7 @@ import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.log4j.Logger;
+import org.simject.exception.SimException;
 import org.simject.util.SimContants;
 
 import com.thoughtworks.xstream.XStream;
@@ -36,7 +37,7 @@ import com.thoughtworks.xstream.XStream;
  * 
  * @author Simon Martinelli
  */
-public class HttpClientProxy implements InvocationHandler {
+public final class HttpClientProxy implements InvocationHandler {
 
 	private final static Logger logger = Logger
 			.getLogger(HttpClientProxy.class);
@@ -44,7 +45,7 @@ public class HttpClientProxy implements InvocationHandler {
 	/**
 	 * Holds the URL
 	 */
-	private URL url;
+	final private URL url;
 
 	/**
 	 * Factory Method for creation
@@ -54,8 +55,8 @@ public class HttpClientProxy implements InvocationHandler {
 	 * @param url
 	 * @return an instance of HttpClientProxy
 	 */
-	public static Object newInstance(ClassLoader loader, Class<?>[] interfaces,
-			URL url) {
+	public static Object newInstance(final ClassLoader loader, final Class<?>[] interfaces,
+			final URL url) {
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
 				new HttpClientProxy(url));
 	}
@@ -65,12 +66,12 @@ public class HttpClientProxy implements InvocationHandler {
 	 * 
 	 * @param url
 	 */
-	private HttpClientProxy(URL url) {
+	private HttpClientProxy(final URL url) {
 		this.url = url;
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args)
+	public Object invoke(final Object proxy, final Method method, final Object[] args)
 			throws Throwable {
 		Object result;
 		try {
@@ -79,8 +80,8 @@ public class HttpClientProxy implements InvocationHandler {
 		catch (Exception e) {
 			logger.fatal(e);
 			e.printStackTrace();
-			throw new RuntimeException("unexpected invocation exception: "
-					+ e.getMessage());
+			throw new SimException("unexpected invocation exception: "
+					+ e.getMessage(), e);
 		}
 		return result;
 	}
@@ -97,34 +98,34 @@ public class HttpClientProxy implements InvocationHandler {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Object invokeUrl(Method method, Object[] args) throws IOException,
+	private Object invokeUrl(final Method method, final Object[] args) throws IOException,
 			ClassNotFoundException {
 
-		XStream xstream = new XStream();
-		String xml = xstream.toXML(args);
+		final XStream xstream = new XStream();
+		final String xml = xstream.toXML(args);
 
-		PostMethod post = new PostMethod(this.url.toString());
-		RequestEntity req = new ByteArrayRequestEntity(xml.getBytes(),
+		final PostMethod post = new PostMethod(this.url.toString());
+		final RequestEntity req = new ByteArrayRequestEntity(xml.getBytes(),
 				SimContants.CONTENT_TYPE_XML);
 		post.setRequestEntity(req);
 
-		Header headerMethod = new Header(SimContants.PARAMETER_METHOD, method
+		final Header headerMethod = new Header(SimContants.PARAM_METHOD, method
 				.getName());
 		post.addRequestHeader(headerMethod);
 
-		StringBuffer params = new StringBuffer();
-		for (Class param : method.getParameterTypes()) {
-			params.append(param.getName()
-					+ SimContants.PARAMETER_TYPE_DELIMITER);
+		final StringBuffer params = new StringBuffer();
+		for (Class<?> param : method.getParameterTypes()) {
+			final String paramString = param.getName() + SimContants.PARAM_TYPE_DELIM;
+			params.append(paramString);
 		}
 		if (params.length() > 0) {
-			String parameters = params.toString();
-			Header headerParamTypes = new Header(SimContants.PARAMETER_TYPES,
+			final String parameters = params.toString();
+			final Header headerParamTypes = new Header(SimContants.PARAM_TYPES,
 					parameters);
 			post.addRequestHeader(headerParamTypes);
 		}
 
-		HttpClient httpclient = new HttpClient();
+		final HttpClient httpclient = new HttpClient();
 		httpclient.executeMethod(post);
 
 		logger.debug(post.getResponseBodyAsString());

@@ -19,37 +19,40 @@ public class SimFactoryTest {
 	@Test
 	public void testSimFactory() throws Exception {
 
-		SimFactory factory = new SimFactory(RESOURCES_XML);
-		TestClass testClass = factory.getResource(TestClass.class);
+		final SimFactory factory = new SimFactory(RESOURCES_XML);
+		final TestClass testClass = factory.getResource(TestClass.class);
 
 		logger.info(testClass.toString());
 
-		assertNotNull(testClass);
+		assertNotNull("Class not found", testClass);
 	}
 
 	@Test
 	public void testSimFactoryWithInterface() throws Exception {
 
-		SimFactory factory = new SimFactory(RESOURCES_XML);
-		TestInterface testInterface = factory.getResource(TestInterface.class);
+		final SimFactory factory = new SimFactory(RESOURCES_XML);
+		final TestInterface testInterface = factory
+				.getResource(TestInterface.class);
 
 		logger.info(testInterface.toString());
 
-		assertNotNull(testInterface);
+		assertNotNull("Interface not found", testInterface);
 	}
 
 	@Test
 	public void testSimFactoryNotFound() throws Exception {
 
 		try {
-			SimFactory factory = new SimFactory(RESOURCES_XML);
-			TestNotFoundInterface testNotFoundInterface = factory
+			final SimFactory factory = new SimFactory(RESOURCES_XML);
+			final TestNotFoundInterface tnfi = factory
 					.getResource(TestNotFoundInterface.class);
+			tnfi.getClass();
 
 			fail();
 		}
 		catch (Exception e) {
 			assertEquals(
+					"Exception not as expected",
 					"Resource of type org.simject.library.test.dummy.TestNotFoundInterface not found",
 					e.getMessage());
 		}
@@ -58,10 +61,10 @@ public class SimFactoryTest {
 	@Test
 	public void testDependencyInjection() throws Exception {
 
-		SimFactory factory = new SimFactory(RESOURCES_XML);
-		TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory
+		final SimFactory factory = new SimFactory(RESOURCES_XML);
+		final TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory
 				.getResource(TestInterface.class);
 
-		assertNotNull(testInterfaceImpl);
+		assertNotNull("Implementation not found", testInterfaceImpl);
 	}
 }

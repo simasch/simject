@@ -16,12 +16,15 @@
 package org.simject.exception;
 
 /**
+ * Super simject Exception 
  * 
  * @author Simon Martinelli
  */
 public class SimException extends RuntimeException {
 
-	public SimException(String message, Exception cause) {
+	private static final long serialVersionUID = 2932845686500036517L;
+
+	public SimException(final String message, final Exception cause) {
 		super(message, cause);
 	}
 }

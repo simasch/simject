@@ -21,7 +21,9 @@ package org.simject.exception;
  */
 public class SimResourceNotFoundException extends SimException {
 
-	public SimResourceNotFoundException(String message) {
+	private static final long serialVersionUID = -7693816998445602973L;
+
+	public SimResourceNotFoundException(final String message) {
 		super(message, null);
 	}
 }

@@ -162,6 +162,19 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
+					<rulesets>
+						<ruleset>/rulesets/basic.xml</ruleset>
+						<ruleset>/rulesets/coupling.xml</ruleset>
+						<ruleset>/rulesets/design.xml</ruleset>
+						<ruleset>/rulesets/imports.xml</ruleset>
+						<ruleset>/rulesets/junit.xml</ruleset>
+						<ruleset>/rulesets/naming.xml</ruleset>
+						<ruleset>/rulesets/optimizations.xml</ruleset>
+						<ruleset>/rulesets/strictexception.xml</ruleset>
+						<ruleset>/rulesets/typeresolution.xml</ruleset>
+						<ruleset>/rulesets/unusedcode.xml</ruleset>
+					</rulesets>
+					<sourceEncoding>utf-8</sourceEncoding>
 					<targetJdk>${java.version}</targetJdk>
 					<linkXref>true</linkXref>
 				</configuration>
