@@ -4,14 +4,14 @@
 	<artifactId>simject-release</artifactId>
 	<packaging>pom</packaging>
 	<name>simject-release</name>
-	<version>1.0.5-SNAPSHOT</version>
+	<version>1.0.5</version>
 	<modules>
 		<module>simject</module>
 		<module>simject-demo-parent</module>
 	</modules>
 	<scm>
-		<connection>scm:svn:https://simject.googlecode.com/svn</connection>
-		<developerConnection>scm:svn:https://simject.googlecode.com/svn</developerConnection>
+		<connection>scm:svn:https://simject.googlecode.com/svn/tags/1.0.5</connection>
+		<developerConnection>scm:svn:https://simject.googlecode.com/svn/tags/1.0.5</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
