@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.simject</groupId>
-	<artifactId>simject-factory</artifactId>
+	<artifactId>simject</artifactId>
 	<packaging>jar</packaging>
-	<name>simject-factory</name>
+	<name>simject</name>
 	<version>1.0.5-SNAPSHOT</version>
 	<description>If you are looking for a simple IOC container with JPA
 		and remoting support - try simject! More information can be found at
