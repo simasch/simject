@@ -56,15 +56,16 @@ public class SimServerServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		// Get the context parameter with the config file
-		final String configFile = (String) this.getServletContext().getInitParameter(
-				SIMJECT_CONFIG);
+		final String configFile = (String) this.getServletContext()
+				.getInitParameter(SIMJECT_CONFIG);
 		// create a SimFactory based on the config file
 		simFactory = new SimFactory(configFile);
 	}
 
 	@Override
-	protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(final HttpServletRequest req,
+			final HttpServletResponse resp) throws ServletException,
+			IOException {
 
 		try {
 			// get the classname, create a Class instance and get the resource
@@ -98,8 +99,9 @@ public class SimServerServlet extends HttpServlet {
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
 	 */
-	private void invokeMethod(final HttpServletRequest req, final HttpServletResponse resp,
-			final Object obj, final Object[] args) throws IllegalAccessException,
+	private void invokeMethod(final HttpServletRequest req,
+			final HttpServletResponse resp, final Object obj,
+			final Object[] args) throws IllegalAccessException,
 			InvocationTargetException, IOException, ClassNotFoundException,
 			SecurityException, NoSuchMethodException {
 
@@ -107,8 +109,7 @@ public class SimServerServlet extends HttpServlet {
 		final String methodString = req.getHeader(SimContants.PARAM_METHOD);
 		logger.debug("methodString: " + methodString);
 		// get the parameter types from the HTTP header
-		final String paramTypesString = req
-				.getHeader(SimContants.PARAM_TYPES);
+		final String paramTypesString = req.getHeader(SimContants.PARAM_TYPES);
 
 		Object result = null;
 		if (paramTypesString == null) {
@@ -147,8 +148,8 @@ public class SimServerServlet extends HttpServlet {
 		Class<?>[] parameters = new Class[0];
 		if (parameterString != null) {
 			// The parameter types are seperated by ","
-			final StringTokenizer stokenizer = new StringTokenizer(parameterString,
-					SimContants.PARAM_TYPE_DELIM);
+			final StringTokenizer stokenizer = new StringTokenizer(
+					parameterString, SimContants.PARAM_TYPE_DELIM);
 			parameters = new Class[stokenizer.countTokens()];
 			int index = 0;
 			while (stokenizer.hasMoreTokens()) {
@@ -171,8 +172,8 @@ public class SimServerServlet extends HttpServlet {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Object[] getArguments(final HttpServletRequest req) throws IOException,
-			ClassNotFoundException {
+	private Object[] getArguments(final HttpServletRequest req)
+			throws IOException, ClassNotFoundException {
 
 		final String xml = this.inputStreamToString(req.getInputStream());
 		logger.debug(xml);
@@ -190,11 +191,12 @@ public class SimServerServlet extends HttpServlet {
 	 * @return
 	 * @throws IOException
 	 */
-	private String inputStreamToString(final InputStream istream) throws IOException {
+	private String inputStreamToString(final InputStream istream)
+			throws IOException {
 		final StringBuffer out = new StringBuffer();
 		final byte[] bytes = new byte[4096];
 		for (int n; (n = istream.read(bytes)) != -1;) {
-			out.append(new String(bytes, 0, n));
+			out.append(new String(bytes, 0, n)); // NOPMD
 		}
 		return out.toString();
 	}
@@ -206,7 +208,8 @@ public class SimServerServlet extends HttpServlet {
 	 * @return
 	 */
 	private String getClassName(final HttpServletRequest req) {
-		final StringTokenizer stokenzier = new StringTokenizer(req.getPathInfo(), "/");
+		final StringTokenizer stokenzier = new StringTokenizer(req
+				.getPathInfo(), "/");
 		String[] tokens = new String[stokenzier.countTokens()];
 		int index = 0;
 		while (stokenzier.hasMoreTokens()) {
@@ -218,8 +221,9 @@ public class SimServerServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doGet(final HttpServletRequest req,
+			final HttpServletResponse resp) throws ServletException,
+			IOException {
 		this.doPost(req, resp);
 	}
 }
