@@ -3,6 +3,8 @@
 	<name>simject-demo-server</name>
 	<comment></comment>
 	<projects>
+		<project>simject</project>
+		<project>simject-demo-interface</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
