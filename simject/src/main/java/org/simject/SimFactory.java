@@ -165,8 +165,8 @@ public class SimFactory {
 	 * @return
 	 * @throws MalformedURLException
 	 */
-	private Object createHttpClientProxy(final Class<?> clazz, final String target)
-			throws MalformedURLException {
+	private Object createHttpClientProxy(final Class<?> clazz,
+			final String target) throws MalformedURLException {
 		Object obj = null;
 
 		obj = HttpClientProxy.newInstance(Thread.currentThread()
@@ -212,8 +212,8 @@ public class SimFactory {
 		for (Property property : resource.getProperty()) {
 			props.put(property.getName(), property.getValue());
 		}
-		final EntityManagerFactory emf = Persistence.createEntityManagerFactory(
-				resource.getName(), props);
+		final EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory(resource.getName(), props);
 		return emf.createEntityManager();
 	}
 
@@ -226,8 +226,8 @@ public class SimFactory {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	private Object createInstance(final Class<?> clazz) throws InstantiationException,
-			IllegalAccessException {
+	private Object createInstance(final Class<?> clazz)
+			throws InstantiationException, IllegalAccessException {
 
 		if (clazz.isInterface()) {
 			throw new InstantiationException(
@@ -244,7 +244,8 @@ public class SimFactory {
 			for (Object obj : this.resourceMap.values()) {
 				final Field[] fields = obj.getClass().getDeclaredFields();
 				for (Field field : fields) {
-					final Annotation[] annotations = field.getDeclaredAnnotations();
+					final Annotation[] annotations = field
+							.getDeclaredAnnotations();
 					for (Annotation annotation : annotations) {
 						if (annotation.annotationType().equals(
 								javax.annotation.Resource.class)) {
