@@ -16,7 +16,6 @@
 package org.simject.remote.client;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
@@ -26,12 +25,10 @@ import java.net.URL;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.log4j.Logger;
-import org.simject.exception.SimException;
 import org.simject.util.Protocol;
 import org.simject.util.SimConstants;
 
@@ -101,14 +98,14 @@ public final class HttpClientProxy implements InvocationHandler {
 		try {
 			if (protocol == Protocol.Binary) {
 				result = this.invokeUrlBinary(method, args);
-			} else {
+			}
+			else {
 				result = this.invokeUrlXml(method, args);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			logger.fatal(e);
-			e.printStackTrace();
-			throw new SimException("unexpected invocation exception: "
-					+ e.getMessage(), e);
+			throw e;
 		}
 		return result;
 	}
@@ -123,12 +120,10 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @param method
 	 * @param args
 	 * @return
-	 * @throws IOException
-	 * @throws HttpException
-	 * @throws ClassNotFoundException
+	 * @throws Throwable
 	 */
 	private Object invokeUrlBinary(final Method method, final Object[] args)
-			throws HttpException, IOException, ClassNotFoundException {
+			throws Throwable {
 
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -152,6 +147,10 @@ public final class HttpClientProxy implements InvocationHandler {
 			final ObjectInputStream ois = new ObjectInputStream(post
 					.getResponseBodyAsStream());
 			result = ois.readObject();
+
+			if (result instanceof Throwable) {
+				throw ((Throwable) result);
+			}
 		}
 
 		post.releaseConnection();
@@ -160,8 +159,8 @@ public final class HttpClientProxy implements InvocationHandler {
 	}
 
 	private void createHeader(final Method method, final PostMethod post) {
-		final Header headerMethod = new Header(SimConstants.PARAM_METHOD, method
-				.getName());
+		final Header headerMethod = new Header(SimConstants.PARAM_METHOD,
+				method.getName());
 		post.addRequestHeader(headerMethod);
 
 		// Get all parameter types and add them to a string delimited by ,
@@ -173,8 +172,8 @@ public final class HttpClientProxy implements InvocationHandler {
 		}
 		if (params.length() > 0) {
 			final String parameters = params.toString();
-			final Header headerParamTypes = new Header(SimConstants.PARAM_TYPES,
-					parameters);
+			final Header headerParamTypes = new Header(
+					SimConstants.PARAM_TYPES, parameters);
 			post.addRequestHeader(headerParamTypes);
 		}
 	}
@@ -189,11 +188,10 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @param method
 	 * @param args
 	 * @return
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * @throws Throwable
 	 */
 	private Object invokeUrlXml(final Method method, final Object[] args)
-			throws IOException, ClassNotFoundException {
+			throws Throwable {
 
 		final XStream xstream = new XStream();
 		final String xml = xstream.toXML(args);
@@ -216,6 +214,9 @@ public final class HttpClientProxy implements InvocationHandler {
 		if (post.getResponseContentLength() > 0) {
 			final String response = post.getResponseBodyAsString();
 			result = xstream.fromXML(response);
+			if (result instanceof Throwable) {
+				throw ((Throwable) result);
+			}
 		}
 
 		post.releaseConnection();

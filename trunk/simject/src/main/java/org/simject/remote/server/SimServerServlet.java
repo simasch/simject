@@ -80,10 +80,11 @@ public class SimServerServlet extends HttpServlet {
 			// method
 			final Object[] args = this.getArguments(req);
 			this.invokeMethod(req, resp, obj, args);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// if exception occurs log it
 			logger.fatal(e);
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -94,6 +95,7 @@ public class SimServerServlet extends HttpServlet {
 	 * @param resp
 	 * @param obj
 	 * @param args
+	 * @throws IOException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws IOException
@@ -103,9 +105,7 @@ public class SimServerServlet extends HttpServlet {
 	 */
 	private void invokeMethod(final HttpServletRequest req,
 			final HttpServletResponse resp, final Object obj,
-			final Object[] args) throws IllegalAccessException,
-			InvocationTargetException, IOException, ClassNotFoundException,
-			SecurityException, NoSuchMethodException {
+			final Object[] args) throws IOException {
 
 		// get the method name from the HTTP header
 		final String methodString = req.getHeader(SimConstants.PARAM_METHOD);
@@ -114,21 +114,30 @@ public class SimServerServlet extends HttpServlet {
 		final String paramTypesString = req.getHeader(SimConstants.PARAM_TYPES);
 
 		Object result = null;
-		if (paramTypesString == null) {
-			// method without parameters to invoke
-			final Method method = obj.getClass().getMethod(methodString);
-			result = method.invoke(obj);
-		} else {
-			// method with parameters should be called. Converts the string from
-			// the header to Class array
-			final Class<?>[] parameterTypes = this
-					.getParameterTypes(paramTypesString);
-			final Method method = obj.getClass().getMethod(methodString,
-					parameterTypes);
+		try {
+			if (paramTypesString == null) {
+				// method without parameters to invoke
+				final Method method = obj.getClass().getMethod(methodString);
+				result = method.invoke(obj);
+			}
+			else {
+				// method with parameters should be called. Converts the string
+				// from
+				// the header to Class array
+				final Class<?>[] parameterTypes = this
+						.getParameterTypes(paramTypesString);
+				final Method method = obj.getClass().getMethod(methodString,
+						parameterTypes);
 
-			logger.debug("args: " + args);
-			result = method.invoke(obj, args);
-			logger.debug("result: " + result);
+				logger.debug("args: " + args);
+				result = method.invoke(obj, args);
+				logger.debug("result: " + result);
+			}
+		}
+		catch (Exception e) {
+			// If an exception occurs during invocation put it in the result to
+			// have it serialized
+			result = e;
 		}
 		if (result != null) {
 			if (req.getContentType().equals(SimConstants.CONTENT_TYPE_XML)) {
@@ -138,7 +147,8 @@ public class SimServerServlet extends HttpServlet {
 				final XStream xstream = new XStream();
 				final String xml = xstream.toXML(result);
 				resp.getWriter().write(xml);
-			} else {
+			}
+			else {
 				logger.debug(SimConstants.CONTENT_TYPE_BIN);
 
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -196,8 +206,10 @@ public class SimServerServlet extends HttpServlet {
 			final String xml = this.inputStreamToString(req.getInputStream());
 			final XStream xstream = new XStream();
 			args = xstream.fromXML(xml);
-		} else {
-			final ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
+		}
+		else {
+			final ObjectInputStream ois = new ObjectInputStream(req
+					.getInputStream());
 			args = ois.readObject();
 		}
 
