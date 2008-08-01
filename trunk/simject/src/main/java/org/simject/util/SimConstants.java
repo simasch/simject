@@ -20,7 +20,7 @@ package org.simject.util;
  * 
  * @author Simon Martinelli
  */
-public final class SimContants {
+public final class SimConstants {
 
 	public final static String DEFAULT_DIRECTORY = "META-INF/";
 
@@ -29,6 +29,8 @@ public final class SimContants {
 	public final static String PARAM_TYPES = "types";
 
 	public final static String CONTENT_TYPE_XML = "text/xml";
+	
+	public final static String CONTENT_TYPE_BIN = "application/x-java-serialized-object";
 
 	public final static String PARAM_TYPE_DELIM = ",";
 }

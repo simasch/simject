@@ -12,7 +12,7 @@ import org.simject.library.test.dummy.TestNotFoundInterface;
 
 public class SimFactoryTest {
 
-	private static final String RESOURCES_XML = "resources.xml";
+	private static final String RESOURCES_XML = "test_resources.xml";
 
 	private static final Logger logger = Logger.getLogger(SimFactoryTest.class);
 

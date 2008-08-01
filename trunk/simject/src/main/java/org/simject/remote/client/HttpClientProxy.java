@@ -15,19 +15,25 @@
  */
 package org.simject.remote.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.log4j.Logger;
 import org.simject.exception.SimException;
-import org.simject.util.SimContants;
+import org.simject.util.Protocol;
+import org.simject.util.SimConstants;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -48,17 +54,34 @@ public final class HttpClientProxy implements InvocationHandler {
 	final private URL url;
 
 	/**
+	 * Holds the protocol
+	 */
+	final private Protocol protocol;
+
+	/**
 	 * Factory method for creation
 	 * 
 	 * @param loader
 	 * @param interfaces
 	 * @param url
 	 * @return an instance of HttpClientProxy
+	 * @throws MalformedURLException
 	 */
 	public static Object newInstance(final ClassLoader loader,
-			final Class<?>[] interfaces, final URL url) {
+			final Class<?>[] interfaces, final String target)
+			throws MalformedURLException {
+
+		final String protcolString = target.substring(0, 3);
+		Protocol protocol = Protocol.Xml;
+		if (protcolString.equals(Protocol.Binary.getString())) {
+			protocol = Protocol.Binary;
+		}
+
+		final String urlString = target.substring(4);
+		URL url = new URL(urlString);
+
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
-				new HttpClientProxy(url));
+				new HttpClientProxy(url, protocol));
 	}
 
 	/**
@@ -66,8 +89,9 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * 
 	 * @param url
 	 */
-	private HttpClientProxy(final URL url) {
+	private HttpClientProxy(final URL url, final Protocol protocol) {
 		this.url = url;
+		this.protocol = protocol;
 	}
 
 	@Override
@@ -75,9 +99,12 @@ public final class HttpClientProxy implements InvocationHandler {
 			final Object[] args) throws Throwable {
 		Object result;
 		try {
-			result = this.invokeUrl(method, args);
-		}
-		catch (Exception e) {
+			if (protocol == Protocol.Binary) {
+				result = this.invokeUrlBinary(method, args);
+			} else {
+				result = this.invokeUrlXml(method, args);
+			}
+		} catch (Exception e) {
 			logger.fatal(e);
 			e.printStackTrace();
 			throw new SimException("unexpected invocation exception: "
@@ -87,7 +114,73 @@ public final class HttpClientProxy implements InvocationHandler {
 	}
 
 	/**
-	 * Synchronous call over HTTP
+	 * Synchronous call over HTTP using binary protocol
+	 * 
+	 * 1. Serializes the arguments to Binary and make a remote call over HTTP
+	 * with Commons HttpClient to the desired method. 2. Deserializes the binary
+	 * response from the server.
+	 * 
+	 * @param method
+	 * @param args
+	 * @return
+	 * @throws IOException
+	 * @throws HttpException
+	 * @throws ClassNotFoundException
+	 */
+	private Object invokeUrlBinary(Method method, Object[] args)
+			throws HttpException, IOException, ClassNotFoundException {
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(args);
+		oos.close();
+
+		final PostMethod post = new PostMethod(this.url.toString());
+		final RequestEntity req = new ByteArrayRequestEntity(
+				baos.toByteArray(), SimConstants.CONTENT_TYPE_BIN);
+		post.setRequestEntity(req);
+
+		// The method name and the parameter types are set to the header
+		this.createHeader(method, post);
+
+		final HttpClient httpclient = new HttpClient();
+		httpclient.executeMethod(post);
+
+		// Get response if the content is > 0
+		Object result = null;
+		if (post.getResponseContentLength() > 0) {
+			ObjectInputStream ois = new ObjectInputStream(post
+					.getResponseBodyAsStream());
+			result = ois.readObject();
+		}
+
+		post.releaseConnection();
+
+		return result;
+	}
+
+	private void createHeader(Method method, final PostMethod post) {
+		final Header headerMethod = new Header(SimConstants.PARAM_METHOD, method
+				.getName());
+		post.addRequestHeader(headerMethod);
+
+		// Get all parameter types and add them to a string delimited by ,
+		final StringBuffer params = new StringBuffer();
+		for (Class<?> param : method.getParameterTypes()) {
+			final String paramString = param.getName()
+					+ SimConstants.PARAM_TYPE_DELIM;
+			params.append(paramString);
+		}
+		if (params.length() > 0) {
+			final String parameters = params.toString();
+			final Header headerParamTypes = new Header(SimConstants.PARAM_TYPES,
+					parameters);
+			post.addRequestHeader(headerParamTypes);
+		}
+	}
+
+	/**
+	 * Synchronous call over HTTP using XML protocol
 	 * 
 	 * 1. Serializes the arguments to XML using XStream and make a remote call
 	 * over HTTP with Commons HttpClient to the desired method. 2. Deserializes
@@ -99,7 +192,7 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Object invokeUrl(final Method method, final Object[] args)
+	private Object invokeUrlXml(final Method method, final Object[] args)
 			throws IOException, ClassNotFoundException {
 
 		final XStream xstream = new XStream();
@@ -107,27 +200,11 @@ public final class HttpClientProxy implements InvocationHandler {
 
 		final PostMethod post = new PostMethod(this.url.toString());
 		final RequestEntity req = new ByteArrayRequestEntity(xml.getBytes(),
-				SimContants.CONTENT_TYPE_XML);
+				SimConstants.CONTENT_TYPE_XML);
 		post.setRequestEntity(req);
 
 		// The method name and the parameter types are set to the header
-		final Header headerMethod = new Header(SimContants.PARAM_METHOD, method
-				.getName());
-		post.addRequestHeader(headerMethod);
-
-		// Get all parameter types and add them to a string delimited by ,
-		final StringBuffer params = new StringBuffer();
-		for (Class<?> param : method.getParameterTypes()) {
-			final String paramString = param.getName()
-					+ SimContants.PARAM_TYPE_DELIM;
-			params.append(paramString);
-		}
-		if (params.length() > 0) {
-			final String parameters = params.toString();
-			final Header headerParamTypes = new Header(SimContants.PARAM_TYPES,
-					parameters);
-			post.addRequestHeader(headerParamTypes);
-		}
+		this.createHeader(method, post);
 
 		final HttpClient httpclient = new HttpClient();
 		httpclient.executeMethod(post);
@@ -137,7 +214,8 @@ public final class HttpClientProxy implements InvocationHandler {
 		// Get response if the content is > 0
 		Object result = null;
 		if (post.getResponseContentLength() > 0) {
-			result = xstream.fromXML(post.getResponseBodyAsString());
+			String response = post.getResponseBodyAsString();
+			result = xstream.fromXML(response);
 		}
 
 		post.releaseConnection();
