@@ -78,7 +78,7 @@ public final class HttpClientProxy implements InvocationHandler {
 		}
 
 		final String urlString = target.substring(4);
-		URL url = new URL(urlString);
+		final URL url = new URL(urlString);
 
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
 				new HttpClientProxy(url, protocol));
@@ -127,11 +127,11 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @throws HttpException
 	 * @throws ClassNotFoundException
 	 */
-	private Object invokeUrlBinary(Method method, Object[] args)
+	private Object invokeUrlBinary(final Method method, final Object[] args)
 			throws HttpException, IOException, ClassNotFoundException {
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final ObjectOutputStream oos = new ObjectOutputStream(baos);
 		oos.writeObject(args);
 		oos.close();
 
@@ -149,7 +149,7 @@ public final class HttpClientProxy implements InvocationHandler {
 		// Get response if the content is > 0
 		Object result = null;
 		if (post.getResponseContentLength() > 0) {
-			ObjectInputStream ois = new ObjectInputStream(post
+			final ObjectInputStream ois = new ObjectInputStream(post
 					.getResponseBodyAsStream());
 			result = ois.readObject();
 		}
@@ -159,7 +159,7 @@ public final class HttpClientProxy implements InvocationHandler {
 		return result;
 	}
 
-	private void createHeader(Method method, final PostMethod post) {
+	private void createHeader(final Method method, final PostMethod post) {
 		final Header headerMethod = new Header(SimConstants.PARAM_METHOD, method
 				.getName());
 		post.addRequestHeader(headerMethod);
@@ -214,7 +214,7 @@ public final class HttpClientProxy implements InvocationHandler {
 		// Get response if the content is > 0
 		Object result = null;
 		if (post.getResponseContentLength() > 0) {
-			String response = post.getResponseBodyAsString();
+			final String response = post.getResponseBodyAsString();
 			result = xstream.fromXML(response);
 		}
 

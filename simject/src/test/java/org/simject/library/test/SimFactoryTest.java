@@ -1,6 +1,8 @@
 package org.simject.library.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -22,7 +24,7 @@ public class SimFactoryTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testSimFactory() throws Exception {
+	public void testSimFactory() {
 
 		final SimFactory factory = new SimFactory(RESOURCES_XML);
 		final TestClass testClass = factory.getResource(TestClass.class);
@@ -38,7 +40,7 @@ public class SimFactoryTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testSimFactoryWithInterface() throws Exception {
+	public void testSimFactoryWithInterface() {
 
 		final SimFactory factory = new SimFactory(RESOURCES_XML);
 		final TestInterface testInterface = factory
@@ -55,7 +57,7 @@ public class SimFactoryTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testSimFactoryClassNotFound() throws Exception {
+	public void testSimFactoryClassNotFound() {
 
 		try {
 			final SimFactory factory = new SimFactory(RESOURCES_XML);
@@ -79,7 +81,7 @@ public class SimFactoryTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testSimFactoryConfigFileNotFound() throws Exception {
+	public void testSimFactoryConfigFileNotFound() {
 
 		try {
 			final SimFactory factory = new SimFactory("abc");
@@ -101,7 +103,7 @@ public class SimFactoryTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testDependencyInjection() throws Exception {
+	public void testDependencyInjection() {
 
 		final SimFactory factory = new SimFactory(RESOURCES_XML);
 		final TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory
