@@ -6,7 +6,7 @@ public enum Protocol {
 	
 	private String string;
 
-	Protocol(String string) {
+	Protocol(final String string) {
 		this.string = string;
 	}
 	

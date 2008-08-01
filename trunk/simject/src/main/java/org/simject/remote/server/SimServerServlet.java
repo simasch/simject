@@ -141,8 +141,8 @@ public class SimServerServlet extends HttpServlet {
 			} else {
 				logger.debug(SimConstants.CONTENT_TYPE_BIN);
 
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				final ObjectOutputStream oos = new ObjectOutputStream(baos);
 				oos.writeObject(result);
 				oos.close();
 
@@ -197,7 +197,7 @@ public class SimServerServlet extends HttpServlet {
 			final XStream xstream = new XStream();
 			args = xstream.fromXML(xml);
 		} else {
-			ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
+			final ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
 			args = ois.readObject();
 		}
 
