@@ -15,8 +15,11 @@
  */
 package org.simject.remote.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
@@ -28,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.simject.SimFactory;
-import org.simject.util.SimContants;
+import org.simject.util.SimConstants;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -77,8 +80,7 @@ public class SimServerServlet extends HttpServlet {
 			// method
 			final Object[] args = this.getArguments(req);
 			this.invokeMethod(req, resp, obj, args);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// if exception occurs log it
 			logger.fatal(e);
 			e.printStackTrace();
@@ -106,18 +108,17 @@ public class SimServerServlet extends HttpServlet {
 			SecurityException, NoSuchMethodException {
 
 		// get the method name from the HTTP header
-		final String methodString = req.getHeader(SimContants.PARAM_METHOD);
+		final String methodString = req.getHeader(SimConstants.PARAM_METHOD);
 		logger.debug("methodString: " + methodString);
 		// get the parameter types from the HTTP header
-		final String paramTypesString = req.getHeader(SimContants.PARAM_TYPES);
+		final String paramTypesString = req.getHeader(SimConstants.PARAM_TYPES);
 
 		Object result = null;
 		if (paramTypesString == null) {
 			// method without parameters to invoke
 			final Method method = obj.getClass().getMethod(methodString);
 			result = method.invoke(obj);
-		}
-		else {
+		} else {
 			// method with parameters should be called. Converts the string from
 			// the header to Class array
 			final Class<?>[] parameterTypes = this
@@ -127,12 +128,27 @@ public class SimServerServlet extends HttpServlet {
 
 			logger.debug("args: " + args);
 			result = method.invoke(obj, args);
+			logger.debug("result: " + result);
 		}
 		if (result != null) {
-			// if there is a result use XStream to serialize it to XML
-			final XStream xstream = new XStream();
-			final String xml = xstream.toXML(result);
-			resp.getWriter().write(xml);
+			if (req.getContentType().equals(SimConstants.CONTENT_TYPE_XML)) {
+				logger.debug(SimConstants.CONTENT_TYPE_XML);
+
+				resp.setContentType(SimConstants.CONTENT_TYPE_XML);
+				final XStream xstream = new XStream();
+				final String xml = xstream.toXML(result);
+				resp.getWriter().write(xml);
+			} else {
+				logger.debug(SimConstants.CONTENT_TYPE_BIN);
+
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(result);
+				oos.close();
+
+				resp.setContentType(SimConstants.CONTENT_TYPE_BIN);
+				resp.getOutputStream().write(baos.toByteArray());
+			}
 		}
 	}
 
@@ -149,7 +165,7 @@ public class SimServerServlet extends HttpServlet {
 		if (parameterString != null) {
 			// The parameter types are seperated by ","
 			final StringTokenizer stokenizer = new StringTokenizer(
-					parameterString, SimContants.PARAM_TYPE_DELIM);
+					parameterString, SimConstants.PARAM_TYPE_DELIM);
 			parameters = new Class[stokenizer.countTokens()];
 			int index = 0;
 			while (stokenizer.hasMoreTokens()) {
@@ -175,11 +191,15 @@ public class SimServerServlet extends HttpServlet {
 	private Object[] getArguments(final HttpServletRequest req)
 			throws IOException, ClassNotFoundException {
 
-		final String xml = this.inputStreamToString(req.getInputStream());
-		logger.debug(xml);
-
-		final XStream xstream = new XStream();
-		final Object args = xstream.fromXML(xml);
+		Object args = null;
+		if (req.getContentType().equals(SimConstants.CONTENT_TYPE_XML)) {
+			final String xml = this.inputStreamToString(req.getInputStream());
+			final XStream xstream = new XStream();
+			args = xstream.fromXML(xml);
+		} else {
+			ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
+			args = ois.readObject();
+		}
 
 		return (Object[]) args;
 	}

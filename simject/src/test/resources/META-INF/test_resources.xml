@@ -7,7 +7,7 @@
 	<resource type="org.simject.library.test.dummy.TestInterface"
 		target="org.simject.library.test.dummy.TestInterfaceImpl" />
 	<resource type="org.simject.library.test.dummy.TestRemoteInterface"
-		target="http://localhost:8080/demo/remote/org.simject.library.test.dummy.TestRemoteInterface" />
+		target="xml:http://localhost:8080/demo/remote/org.simject.library.test.dummy.TestRemoteInterface" />
 	<resource type="javax.persistence.EntityManager" name="org.simject.demo">
 		<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
 		<property name="hibernate.connection.username" value="root" />

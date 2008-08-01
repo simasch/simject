@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +36,7 @@ import org.simject.jaxb.Property;
 import org.simject.jaxb.Resource;
 import org.simject.jaxb.Resources;
 import org.simject.remote.client.HttpClientProxy;
-import org.simject.util.SimContants;
+import org.simject.util.SimConstants;
 
 /**
  * SimFactory represents the IOC container. It parses the XML configuration
@@ -103,10 +102,10 @@ public class SimFactory {
 
 			final InputStream istream = Thread.currentThread()
 					.getContextClassLoader().getResourceAsStream(
-							SimContants.DEFAULT_DIRECTORY + fileName);
+							SimConstants.DEFAULT_DIRECTORY + fileName);
 
 			if (istream == null) {
-				throw new FileNotFoundException(SimContants.DEFAULT_DIRECTORY
+				throw new FileNotFoundException(SimConstants.DEFAULT_DIRECTORY
 						+ fileName + " not found");
 			}
 			else {
@@ -146,7 +145,7 @@ public class SimFactory {
 			obj = this.createEntityManager(resource);
 		}
 		else if (resource.getTarget() != null
-				&& resource.getTarget().startsWith("http")) {
+				&& resource.getTarget().contains("http://")) {
 			// target is an url
 			obj = this.createHttpClientProxy(clazz, resource.getTarget());
 		}
@@ -170,9 +169,8 @@ public class SimFactory {
 			throws MalformedURLException {
 		Object obj = null;
 
-		final URL url = new URL(target);
 		obj = HttpClientProxy.newInstance(Thread.currentThread()
-				.getContextClassLoader(), new Class[] { clazz }, url);
+				.getContextClassLoader(), new Class[] { clazz }, target);
 
 		return obj;
 	}
