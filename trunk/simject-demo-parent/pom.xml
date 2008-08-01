@@ -3,7 +3,7 @@
 	<groupId>org.simject</groupId>
 	<artifactId>simject-demo-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<name>simject-demo-parent</name>
 	<url>http://www.simject.org</url>
 	<build>
