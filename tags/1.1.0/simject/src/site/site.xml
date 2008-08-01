@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="simject - simple dependecy injection">
+  <body>
+	<links>
+      <item name="simject@Google Code" href="http://code.google.com/p/simject/" />
+    </links>
+    <menu name="simject">
+	  <item name="Overview" href="index.html" />
+	  <item name="Download" href="http://code.google.com/p/simject/downloads/list" />
+	  <item name="UsersGuide" href="http://code.google.com/p/simject/wiki/UsersGuide" />
+    </menu>
+    <menu ref="reports"/>
+    <menu name="Links">
+	  <item name="simject@Google Code" href="http://code.google.com/p/simject/" />
+    </menu>
+  </body>
+</project>
