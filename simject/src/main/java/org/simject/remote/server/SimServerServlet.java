@@ -58,6 +58,13 @@ public class SimServerServlet extends HttpServlet {
 
 	@Override
 	public void init() throws ServletException {
+		if (this.simFactory == null) {
+			// Get the context parameter with the config file
+			final String configFile = (String) this.getServletContext()
+					.getInitParameter(SIMJECT_CONFIG);
+			// create a SimFactory based on the config file
+			this.simFactory = new SimFactory(configFile);
+		}
 	}
 
 	@Override
@@ -83,16 +90,6 @@ public class SimServerServlet extends HttpServlet {
 		}
 	}
 
-	private void initialize() {
-		if (this.simFactory == null) {
-			// Get the context parameter with the config file
-			final String configFile = (String) this.getServletContext()
-					.getInitParameter(SIMJECT_CONFIG);
-			// create a SimFactory based on the config file
-			this.simFactory = new SimFactory(configFile);
-		}
-	}
-
 	/**
 	 * Invokes a method based on the parameters passed from the client
 	 * 
@@ -114,9 +111,6 @@ public class SimServerServlet extends HttpServlet {
 
 		Object result = null;
 		try {
-			// TODO is this the right place?
-			this.initialize();
-
 			// get the method name from the HTTP header
 			final String methodString = req
 					.getHeader(SimConstants.PARAM_METHOD);
@@ -124,7 +118,6 @@ public class SimServerServlet extends HttpServlet {
 			// get the parameter types from the HTTP header
 			final String paramTypesString = req
 					.getHeader(SimConstants.PARAM_TYPES);
-
 
 			if (paramTypesString == null) {
 				// method without parameters to invoke
