@@ -118,7 +118,7 @@ public class SimFactory {
 		}
 		catch (Exception e) {
 			logger.fatal(e);
-			throw new SimConfigException("Unable to load configuration", e);
+			throw new SimConfigException(e.getMessage(), e);
 		}
 	}
 
