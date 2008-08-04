@@ -1,10 +1,12 @@
 package org.simject.demo.service;
 
+import java.util.List;
+
 import org.simject.demo.model.Employee;
 
 public interface EmployeeService {
 
-	String getHello(Employee employee);
-
-	void find(String name, Integer age);
+	List<Employee> listEmployees();
+	
+	void insertEmployee(Employee employee);
 }

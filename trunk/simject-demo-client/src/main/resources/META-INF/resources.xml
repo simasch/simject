@@ -4,5 +4,5 @@
 	xsi:schemaLocation="http://simject.org/xml/ns/resources http://simject.org/xml/ns/resources/resources_1_0.xsd"
 	version="1.0">
 	<resource type="org.simject.demo.service.EmployeeService"
-		target="bin:http://localhost:8080/simject-demo-server/remote/org.simject.demo.service.EmployeeService" />
+		target="xml:http://localhost:8080/demo/remote/org.simject.demo.service.EmployeeService" />
 </resources>

@@ -11,8 +11,7 @@
 	</dependencySets>
 	<fileSets>
 		<fileSet>
-			<directory>src/main/resources/META-INF 
-			</directory>
+			<directory>src/main/resources/META-INF</directory>
 			<outputDirectory>/</outputDirectory>
 		</fileSet>
 	</fileSets>

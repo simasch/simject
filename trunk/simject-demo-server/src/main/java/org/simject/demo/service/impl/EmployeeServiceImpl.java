@@ -1,5 +1,7 @@
 package org.simject.demo.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.simject.demo.business.EmployeeManager;
@@ -11,11 +13,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Resource
 	private EmployeeManager employeeManager;
 
-	public String getHello(Employee employee) {
-		return this.employeeManager.getHello(employee);
+	/* (non-Javadoc)
+	 * @see org.simject.demo.service.EmployeeService#listEmployees()
+	 */
+	public List<Employee> listEmployees() {
+		return this.employeeManager.findAll();
 	}
 
-	public void find(String name, Integer age) {
-		
+	/* (non-Javadoc)
+	 * @see org.simject.demo.service.EmployeeService#insertEmployee(org.simject.demo.model.Employee)
+	 */
+	public void insertEmployee(Employee employee) {
+		this.employeeManager.saveOrUpdate(employee);
 	}
 }
