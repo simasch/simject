@@ -7,27 +7,31 @@ import org.simject.SimFactory;
 import org.simject.demo.model.Employee;
 import org.simject.demo.service.EmployeeService;
 
-public class DemoClient {
+public final class DemoClient {
 
-	private final static Logger logger = Logger.getLogger(DemoClient.class); 
-	
+	private final static Logger logger = Logger.getLogger(DemoClient.class);
+
+	// Avoid construction of DemoClient
+	private DemoClient() {
+	}
+
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		SimFactory factory = new SimFactory("resources.xml");
+	public static void main(final String[] args) {
+		final SimFactory factory = new SimFactory("resources.xml");
 
-		EmployeeService service = factory.getResource(EmployeeService.class);
-		Employee employee = new Employee();
+		final EmployeeService service = factory.getResource(EmployeeService.class);
+		final Employee employee = new Employee();
 		employee.setName("Simon Martinelli");
 
 		service.insertEmployee(employee);
-		
-		List<Employee> list = service.listEmployees();
+
+		final List<Employee> list = service.listEmployees();
 		for (Employee employee2 : list) {
 			logger.info(employee2);
 		}
-		
+
 	}
 
 }

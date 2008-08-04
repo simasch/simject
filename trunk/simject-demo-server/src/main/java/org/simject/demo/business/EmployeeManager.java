@@ -12,20 +12,20 @@ import org.simject.demo.model.Employee;
 public class EmployeeManager {
 
 	@Resource
-	private EntityManager em;
+	private EntityManager entityManager;
 
+	@SuppressWarnings("unchecked")
 	public List<Employee> findAll() {
-		Query query = this.em.createNamedQuery("Employee.findAll");
-		List<Employee> list = query.getResultList();
-		return list;
+		final Query query = this.entityManager
+				.createNamedQuery("Employee.findAll");
+		return query.getResultList();
 	}
 
-	public void saveOrUpdate(Employee employee) {
-		EntityTransaction trx = this.em.getTransaction();
+	public void saveOrUpdate(final Employee employee) {
+		final EntityTransaction trx = this.entityManager.getTransaction();
 		trx.begin();
-		this.em.merge(employee);
+		this.entityManager.merge(employee);
 		trx.commit();
-		
-		
+
 	}
 }
