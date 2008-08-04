@@ -118,7 +118,7 @@ public class SimFactory {
 		}
 		catch (Exception e) {
 			logger.fatal(e);
-			throw new SimConfigException(e.getMessage(), e);
+			throw new SimConfigException("Unable to load configuration", e);
 		}
 	}
 
@@ -260,7 +260,9 @@ public class SimFactory {
 		}
 		catch (Exception e) {
 			logger.fatal(e);
-			throw new SimConfigException(e.getMessage(), e);
+			throw new SimConfigException(
+					"Unable to inject dependencies. Please check the configuration",
+					e);
 		}
 	}
 }
