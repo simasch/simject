@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.simject.SimFactory;
+import org.simject.util.Protocol;
 import org.simject.util.SimConstants;
 
 import com.thoughtworks.xstream.XStream;
@@ -144,23 +145,23 @@ public class SimServerServlet extends HttpServlet {
 			result = e;
 		}
 		if (result != null) {
-			if (req.getContentType().equals(SimConstants.CONTENT_TYPE_XML)) {
-				logger.debug(SimConstants.CONTENT_TYPE_XML);
+			if (req.getContentType().equals(Protocol.Xml.getContentType())) {
+				logger.debug(Protocol.Xml.getContentType());
 
-				resp.setContentType(SimConstants.CONTENT_TYPE_XML);
+				resp.setContentType(Protocol.Xml.getContentType());
 				final XStream xstream = new XStream();
 				final String xml = xstream.toXML(result);
 				resp.getWriter().write(xml);
 			}
 			else {
-				logger.debug(SimConstants.CONTENT_TYPE_BIN);
+				logger.debug(Protocol.Binary.getContentType());
 
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final ObjectOutputStream oos = new ObjectOutputStream(baos);
 				oos.writeObject(result);
 				oos.close();
 
-				resp.setContentType(SimConstants.CONTENT_TYPE_BIN);
+				resp.setContentType(Protocol.Binary.getContentType());
 				resp.getOutputStream().write(baos.toByteArray());
 			}
 		}
@@ -206,7 +207,7 @@ public class SimServerServlet extends HttpServlet {
 			throws IOException, ClassNotFoundException {
 
 		Object args = null;
-		if (req.getContentType().equals(SimConstants.CONTENT_TYPE_XML)) {
+		if (req.getContentType().equals(Protocol.Xml.getContentType())) {
 			final String xml = this.inputStreamToString(req.getInputStream());
 			final XStream xstream = new XStream();
 			args = xstream.fromXML(xml);

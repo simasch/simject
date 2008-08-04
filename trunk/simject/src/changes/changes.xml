@@ -7,6 +7,8 @@
 	<body>
 		<release version="1.2.0" date=""
 			description="Remoting Exception handling improved">
+			<action dev="simon.martinelli" type="update">Moved content type
+				from SimConstants to enum Protocol</action>
 			<action dev="simon.martinelli" type="update">When an exception
 				occurs during method invocation on the server side, the exception is
 				serialized as result and rethrown on client side</action>
