@@ -5,7 +5,7 @@
 		<author email="simon@martinelli.ch">Simon Martinelli</author>
 	</properties>
 	<body>
-		<release version="1.2.0" date=""
+		<release version="1.2.0" date="2008-08-04"
 			description="Remoting Exception handling improved">
 			<action dev="simon.martinelli" type="update">Refactoring in remoting classes</action>
 			<action dev="simon.martinelli" type="update">Fixed PMD violations</action>
