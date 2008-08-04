@@ -12,9 +12,10 @@ public class Employee implements Serializable {
 
 	private static final long serialVersionUID = 2507534775004086032L;
 
+	@SuppressWarnings("unused")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Integer id; // NOPMD
 
 	private String name;
 
@@ -22,7 +23,7 @@ public class Employee implements Serializable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
