@@ -14,6 +14,6 @@
 	</servlet-mapping>
 	<context-param>
 		<param-name>simjectConfig</param-name>
-		<param-value>resources.xml</param-value>
+		<param-value>resources-server.xml</param-value>
 	</context-param>
 </web-app>

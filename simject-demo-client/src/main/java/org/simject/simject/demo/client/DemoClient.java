@@ -1,5 +1,7 @@
 package org.simject.simject.demo.client;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.simject.SimFactory;
 import org.simject.demo.model.Employee;
@@ -18,10 +20,14 @@ public class DemoClient {
 		EmployeeService service = factory.getResource(EmployeeService.class);
 		Employee employee = new Employee();
 		employee.setName("Simon Martinelli");
+
+		service.insertEmployee(employee);
 		
-		logger.info(service.getHello(employee));
+		List<Employee> list = service.listEmployees();
+		for (Employee employee2 : list) {
+			logger.info(employee2);
+		}
 		
-		service.find("Peter", 20);
 	}
 
 }
