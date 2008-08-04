@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.simject.remote.server;
+package org.simject.remoting.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

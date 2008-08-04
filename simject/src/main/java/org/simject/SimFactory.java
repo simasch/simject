@@ -35,7 +35,7 @@ import org.simject.exception.SimResourceNotFoundException;
 import org.simject.jaxb.Property;
 import org.simject.jaxb.Resource;
 import org.simject.jaxb.Resources;
-import org.simject.remote.client.HttpClientProxy;
+import org.simject.remoting.client.HttpClientProxy;
 import org.simject.util.SimConstants;
 
 /**
