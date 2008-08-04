@@ -56,7 +56,7 @@ public final class HttpClientProxy implements InvocationHandler {
 	final private Protocol protocol;
 
 	/**
-	 * Factory method for creation
+	 * Factory method
 	 * 
 	 * @param loader
 	 * @param interfaces
@@ -68,15 +68,17 @@ public final class HttpClientProxy implements InvocationHandler {
 			final Class<?>[] interfaces, final String target)
 			throws MalformedURLException {
 
+		// Extract the protocol 
 		final String protcolString = target.substring(0, 3);
 		Protocol protocol = Protocol.Xml;
 		if (protcolString.equals(Protocol.Binary.getString())) {
 			protocol = Protocol.Binary;
 		}
-
+		// Extract the URL
 		final String urlString = target.substring(4);
 		final URL url = new URL(urlString);
 
+		// Create an instance of the proxy 
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
 				new HttpClientProxy(url, protocol));
 	}

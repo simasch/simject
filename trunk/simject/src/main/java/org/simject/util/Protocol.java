@@ -9,7 +9,7 @@ public enum Protocol {
 
 	private String contentType;
 
-	Protocol(final String string, final String contentType) {
+	private Protocol(final String string, final String contentType) {
 		this.string = string;
 		this.contentType = contentType;
 	}

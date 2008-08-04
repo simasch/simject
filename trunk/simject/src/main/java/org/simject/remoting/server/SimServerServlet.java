@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.simject.SimFactory;
-import org.simject.exception.SimException;
 import org.simject.util.Protocol;
 import org.simject.util.SimConstants;
 
@@ -72,23 +71,7 @@ public class SimServerServlet extends HttpServlet {
 	protected void doPost(final HttpServletRequest req,
 			final HttpServletResponse resp) throws ServletException,
 			IOException {
-
-		try {
-			// get the classname, create a Class instance and get the resource
-			// from the SimFactory
-			final String className = this.getClassName(req);
-			final Class<?> clazz = Class.forName(className);
-			final Object obj = this.simFactory.getResource(clazz);
-			// get the arguments passed by the client and invoke the desired
-			// method
-			final Object[] args = this.getArguments(req);
-			this.invokeMethod(req, resp, obj, args);
-		}
-		catch (Exception e) {
-			// if exception occurs log it
-			logger.fatal(e);
-			throw new SimException(e.getMessage(), e);
-		}
+		this.invokeMethod(req, resp);
 	}
 
 	/**
@@ -107,11 +90,18 @@ public class SimServerServlet extends HttpServlet {
 	 * @throws SecurityException
 	 */
 	private void invokeMethod(final HttpServletRequest req,
-			final HttpServletResponse resp, final Object obj,
-			final Object[] args) throws IOException {
+			final HttpServletResponse resp) throws IOException {
 
 		Object result = null;
 		try {
+			// get the classname
+			final String className = this.getClassName(req);
+			// create a Class instance
+			final Class<?> clazz = Class.forName(className);
+			// and get the resource from the SimFactory
+			final Object obj = this.simFactory.getResource(clazz);
+			// get passed arguments and invoke the method
+			final Object[] args = this.getArguments(req);
 			// get the method name from the HTTP header
 			final String methodString = req
 					.getHeader(SimConstants.PARAM_METHOD);
@@ -127,8 +117,7 @@ public class SimServerServlet extends HttpServlet {
 			}
 			else {
 				// method with parameters should be called. Converts the string
-				// from
-				// the header to Class array
+				// from the header to Class array
 				final Class<?>[] parameterTypes = this
 						.getParameterTypes(paramTypesString);
 				final Method method = obj.getClass().getMethod(methodString,
@@ -147,24 +136,46 @@ public class SimServerServlet extends HttpServlet {
 		if (result != null) {
 			if (req.getContentType().equals(Protocol.Xml.getContentType())) {
 				logger.debug(Protocol.Xml.getContentType());
-
-				resp.setContentType(Protocol.Xml.getContentType());
-				final XStream xstream = new XStream();
-				final String xml = xstream.toXML(result);
-				resp.getWriter().write(xml);
+				this.sendXmlResponse(resp, result);
 			}
 			else {
 				logger.debug(Protocol.Binary.getContentType());
-
-				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				final ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(result);
-				oos.close();
-
-				resp.setContentType(Protocol.Binary.getContentType());
-				resp.getOutputStream().write(baos.toByteArray());
+				this.sendBinaryResponse(resp, result);
 			}
 		}
+	}
+
+	/**
+	 * Sends the result as binary stream
+	 * 
+	 * @param resp
+	 * @param result
+	 * @throws IOException
+	 */
+	private void sendBinaryResponse(final HttpServletResponse resp,
+			final Object result) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(result);
+		oos.close();
+
+		resp.setContentType(Protocol.Binary.getContentType());
+		resp.getOutputStream().write(baos.toByteArray());
+	}
+
+	/**
+	 * Sends the result as XML stream
+	 * 
+	 * @param resp
+	 * @param result
+	 * @throws IOException
+	 */
+	private void sendXmlResponse(final HttpServletResponse resp,
+			final Object result) throws IOException {
+		resp.setContentType(Protocol.Xml.getContentType());
+		final XStream xstream = new XStream();
+		final String xml = xstream.toXML(result);
+		resp.getWriter().write(xml);
 	}
 
 	/**
