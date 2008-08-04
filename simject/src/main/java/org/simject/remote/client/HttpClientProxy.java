@@ -130,10 +130,8 @@ public final class HttpClientProxy implements InvocationHandler {
 		oos.writeObject(args);
 		oos.close();
 
-		final PostMethod post = new PostMethod(this.url.toString());
-		final RequestEntity req = new ByteArrayRequestEntity(
-				baos.toByteArray(), SimConstants.CONTENT_TYPE_BIN);
-		post.setRequestEntity(req);
+		final PostMethod post = this.createPostMethod(baos.toByteArray(),
+				Protocol.Binary.getContentType());
 
 		// The method name and the parameter types are set to the header
 		this.createHeader(method, post);
@@ -158,26 +156,6 @@ public final class HttpClientProxy implements InvocationHandler {
 		return result;
 	}
 
-	private void createHeader(final Method method, final PostMethod post) {
-		final Header headerMethod = new Header(SimConstants.PARAM_METHOD,
-				method.getName());
-		post.addRequestHeader(headerMethod);
-
-		// Get all parameter types and add them to a string delimited by ,
-		final StringBuffer params = new StringBuffer();
-		for (Class<?> param : method.getParameterTypes()) {
-			final String paramString = param.getName()
-					+ SimConstants.PARAM_TYPE_DELIM;
-			params.append(paramString);
-		}
-		if (params.length() > 0) {
-			final String parameters = params.toString();
-			final Header headerParamTypes = new Header(
-					SimConstants.PARAM_TYPES, parameters);
-			post.addRequestHeader(headerParamTypes);
-		}
-	}
-
 	/**
 	 * Synchronous call over HTTP using XML protocol
 	 * 
@@ -196,10 +174,8 @@ public final class HttpClientProxy implements InvocationHandler {
 		final XStream xstream = new XStream();
 		final String xml = xstream.toXML(args);
 
-		final PostMethod post = new PostMethod(this.url.toString());
-		final RequestEntity req = new ByteArrayRequestEntity(xml.getBytes(),
-				SimConstants.CONTENT_TYPE_XML);
-		post.setRequestEntity(req);
+		final PostMethod post = this.createPostMethod(xml.getBytes(),
+				Protocol.Xml.getContentType());
 
 		// The method name and the parameter types are set to the header
 		this.createHeader(method, post);
@@ -222,5 +198,46 @@ public final class HttpClientProxy implements InvocationHandler {
 		post.releaseConnection();
 
 		return result;
+	}
+
+	/**
+	 * Creates a HttpClient PostMethod based on a byte[] and the content type
+	 * 
+	 * @param bytes
+	 * @param contentType
+	 * @return
+	 */
+	private PostMethod createPostMethod(final byte[] bytes,
+			final String contentType) {
+		final PostMethod post = new PostMethod(this.url.toString());
+		final RequestEntity req = new ByteArrayRequestEntity(bytes, contentType);
+		post.setRequestEntity(req);
+		return post;
+	}
+
+	/**
+	 * Create the necessairy Header entries
+	 * 
+	 * @param method
+	 * @param post
+	 */
+	private void createHeader(final Method method, final PostMethod post) {
+		final Header headerMethod = new Header(SimConstants.PARAM_METHOD,
+				method.getName());
+		post.addRequestHeader(headerMethod);
+
+		// Get all parameter types and add them to a string delimited by ,
+		final StringBuffer params = new StringBuffer();
+		for (Class<?> param : method.getParameterTypes()) {
+			final String paramString = param.getName()
+					+ SimConstants.PARAM_TYPE_DELIM;
+			params.append(paramString);
+		}
+		if (params.length() > 0) {
+			final String parameters = params.toString();
+			final Header headerParamTypes = new Header(
+					SimConstants.PARAM_TYPES, parameters);
+			post.addRequestHeader(headerParamTypes);
+		}
 	}
 }
