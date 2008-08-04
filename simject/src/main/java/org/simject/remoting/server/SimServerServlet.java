@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
@@ -31,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.simject.SimFactory;
+import org.simject.exception.SimException;
 import org.simject.util.Protocol;
 import org.simject.util.SimConstants;
 
@@ -87,7 +87,7 @@ public class SimServerServlet extends HttpServlet {
 		catch (Exception e) {
 			// if exception occurs log it
 			logger.fatal(e);
-			throw new RuntimeException(e);
+			throw new SimException(e.getMessage(), e);
 		}
 	}
 
