@@ -206,15 +206,23 @@
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jdepend-maven-plugin</artifactId>
+				<artifactId>javancss-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>javancss-maven-plugin</artifactId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>net.sf.xradar</groupId>
 				<artifactId>maven-xradar-plugin</artifactId>
+				<version>0.1</version>
+				<configuration>
+					<debug>true</debug>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
