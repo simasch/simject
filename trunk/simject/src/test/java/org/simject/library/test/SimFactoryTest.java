@@ -14,101 +14,101 @@ import org.simject.library.test.dummy.TestNotFoundInterface;
 
 public class SimFactoryTest {
 
-	private static final String RESOURCES_XML = "test_resources.xml";
+    private static final String RESOURCES_XML = "test_resources.xml";
 
-	private static final Logger logger = Logger.getLogger(SimFactoryTest.class);
+    private static final Logger logger = Logger.getLogger(SimFactoryTest.class);
 
-	/**
-	 * Positive test using a class
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testSimFactory() {
+    /**
+     * Positive test using a class
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSimFactory() {
 
-		final SimFactory factory = new SimFactory(RESOURCES_XML);
-		final TestClass testClass = factory.getResource(TestClass.class);
+        final SimFactory factory = new SimFactory(RESOURCES_XML);
+        final TestClass testClass = factory.getResource(TestClass.class);
 
-		logger.info(testClass.toString());
+        logger.info(testClass.toString());
 
-		assertNotNull("Class not found", testClass);
-	}
+        assertNotNull("Class not found", testClass);
+    }
 
-	/**
-	 * Positiv test using an interface
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testSimFactoryWithInterface() {
+    /**
+     * Positiv test using an interface
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSimFactoryWithInterface() {
 
-		final SimFactory factory = new SimFactory(RESOURCES_XML);
-		final TestInterface testInterface = factory
-				.getResource(TestInterface.class);
+        final SimFactory factory = new SimFactory(RESOURCES_XML);
+        final TestInterface testInterface = factory
+                .getResource(TestInterface.class);
 
-		logger.info(testInterface.toString());
+        logger.info(testInterface.toString());
 
-		assertNotNull("Interface not found", testInterface);
-	}
+        assertNotNull("Interface not found", testInterface);
+    }
 
-	/**
-	 * Negativ test with wrong class
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testSimFactoryClassNotFound() {
+    /**
+     * Negativ test with wrong class
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSimFactoryClassNotFound() {
 
-		try {
-			final SimFactory factory = new SimFactory(RESOURCES_XML);
-			final TestNotFoundInterface tnfi = factory
-					.getResource(TestNotFoundInterface.class);
-			tnfi.getClass();
+        try {
+            final SimFactory factory = new SimFactory(RESOURCES_XML);
+            final TestNotFoundInterface tnfi = factory
+                    .getResource(TestNotFoundInterface.class);
+            tnfi.getClass();
 
-			fail();
-		}
-		catch (Exception e) {
-			assertEquals(
-					"Exception not as expected",
-					"Resource of type org.simject.library.test.dummy.TestNotFoundInterface not found",
-					e.getMessage());
-		}
-	}
+            fail();
+        }
+        catch (Exception e) {
+            assertEquals(
+                    "Exception not as expected",
+                    "Resource of type org.simject.library.test.dummy.TestNotFoundInterface not found",
+                    e.getMessage());
+        }
+    }
 
-	/**
-	 * Negativ test with wrong config file name
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testSimFactoryConfigFileNotFound() {
+    /**
+     * Negativ test with wrong config file name
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSimFactoryConfigFileNotFound() {
 
-		try {
-			final SimFactory factory = new SimFactory("abc");
-			final TestNotFoundInterface tnfi = factory
-					.getResource(TestNotFoundInterface.class);
-			tnfi.getClass();
+        try {
+            final SimFactory factory = new SimFactory("abc");
+            final TestNotFoundInterface tnfi = factory
+                    .getResource(TestNotFoundInterface.class);
+            tnfi.getClass();
 
-			fail();
-		}
-		catch (Exception e) {
-			assertEquals("Exception not as expected", "META-INF/abc not found",
-					e.getMessage());
-		}
-	}
+            fail();
+        }
+        catch (Exception e) {
+            assertEquals("Exception not as expected", "META-INF/abc not found",
+                    e.getMessage());
+        }
+    }
 
-	/**
-	 * Generall DI test
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testDependencyInjection() {
+    /**
+     * Generall DI test
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDependencyInjection() {
 
-		final SimFactory factory = new SimFactory(RESOURCES_XML);
-		final TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory
-				.getResource(TestInterface.class);
+        final SimFactory factory = new SimFactory(RESOURCES_XML);
+        final TestInterfaceImpl testInterfaceImpl = (TestInterfaceImpl) factory
+                .getResource(TestInterface.class);
 
-		assertNotNull("Implementation not found", testInterfaceImpl);
-	}
+        assertNotNull("Implementation not found", testInterfaceImpl);
+    }
 }
