@@ -22,9 +22,9 @@ package org.simject.exception;
  */
 public class SimConfigException extends SimException {
 
-	private static final long serialVersionUID = 4480743918049637863L;
+    private static final long serialVersionUID = 4480743918049637863L;
 
-	public SimConfigException(final String message, final Exception cause) {
-		super(message, cause);
-	}
+    public SimConfigException(final String message, final Exception cause) {
+        super(message, cause);
+    }
 }
