@@ -10,25 +10,25 @@ import javax.persistence.Id;
 @Entity
 public class Employee implements Serializable {
 
-	private static final long serialVersionUID = 2507534775004086032L;
+    private static final long serialVersionUID = 2507534775004086032L;
 
-	@SuppressWarnings("unused")
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id; // NOPMD
+    @SuppressWarnings("unused")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id; // NOPMD
 
-	private String name;
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return this.name;
-	}
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
