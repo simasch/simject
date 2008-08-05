@@ -22,8 +22,8 @@ See licence.txt for dependancies to other open projects.
     </skip-packages>
 	<subsystems>
 		<subsystem id="All" level="1">
-			<name>The system</name>
-            <description>The system. Split this further into modules.</description>
+			<name>simject factory</name>
+            <description></description>
 			<included-packages>
 				<package-root value="" recurse="true"/>
 			</included-packages>
