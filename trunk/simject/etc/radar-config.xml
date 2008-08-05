@@ -1,306 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+XRadar
+Copyright (c) 2004, 2005, Kristoffer Kvam
+All rights reserved.
 
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of Kristoffer Kvam nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ViewVC - http://viewvc.org/
-by Greg Stein - mailto:gstein@lyra.org -->
-<head>
-<title>SourceForge.net Repository - [xradar] View of /trunk/xradar/etc/config/xradar-config-default.xml</title>
-<meta name="generator" content="ViewVC 1.0.5" />
-<link rel="stylesheet" href="/viewvc-static/styles.css" type="text/css" />
-<link rel="stylesheet" type="text/css" href="http://static.sourceforge.net/css/sfx.php?secure=0&amp;20080417-1657" media="screen" title="SFx" />
-</head>
-<body>
+See licence.txt for dependancies to other open projects.
+======================================================================= -->
 
-<div id="hd">
-<h1>
-<a href="http://sourceforge.net/" title="">SourceForge.net</a>
-</h1>
-</div>
-<ul id="mainnav">
-<li><a href="http://sourceforge.net/">Home</a></li>
-<li><a href="http://sourceforge.net/softwaremap/">Browse&nbsp;Software</a></li>
-<li class="new"><a href="http://sourceforge.net/services/buy/index.php">Marketplace<sup><b>NEW</b></sup></a></li>
-<li><a href="http://sourceforge.net/community/">Community</a></li>
-<li><a href="http://sourceforge.net/register-project/">Create&nbsp;Project</a></li>
-<li><a href="http://jobs.sourceforge.net">Jobs</a></li>
-</ul>
-<div id="kahuna">
-<form action="http://sourceforge.net/search/" method="get" name="searchform">
-<input type="hidden" name="type_of_search" value="soft" />
-<fieldset>
-<legend>Search</legend>
-<label>Search SourceForge.net Projects </label>
-<select name="type_of_search">
-<option value="soft" selected="selected">Software</option>
-<option value="projectsWithServices">Marketplace</option>
-</select>
-<input type="text" value="" id="searchbox" name="words" tabindex="1" /><input type="submit" value="Search" id="searchsubmit" tabindex="0" />
-</fieldset>
-</form>
-</div>
+<!-- This is a dummy config that splits the system into one module. Use this as a template, when building your own modules -->
+<radar-config>
+    <skip-packages>
+        <!--package-root value=".." recurse="false"/-->
+    </skip-packages>
+	<subsystems>
+		<subsystem id="All" level="1">
+			<name>The system</name>
+            <description>The system. Split this further into modules.</description>
+			<included-packages>
+				<package-root value="" recurse="true"/>
+			</included-packages>
+			<legal-subordinates>
+				<subsystem id="All"/>
+			</legal-subordinates>
+		</subsystem>
+	</subsystems>
 
-<table style="padding:0.1em;">
-<tr>
-<td>
-<br />
+    <defined-metrics>
+        <thresholds>
+            <threshold level="1" max-value="0.5" color="#FE9F34"/>
+            <threshold level="2" max-value="0.8" color="yellow"/>
+            <threshold level="3" max-value="1.1" color="#BFDE1D"/>
+        </thresholds>
+        <metric name="Total Quality" abbreviation="TQ" type="aggregate">
+            <value>
+                <metric abbreviation="ARCH" significance="0.35"/>
+                <metric abbreviation="CODE" significance="0.30"/>
+                <metric abbreviation="TS" significance="0.35"/>                
+            </value>
 
-<ul id="breadcrumb">
-<li class="begin"><a href="http://sourceforge.net/">SF.net</a></li>
-<li><a href="http://sourceforge.net/softwaremap/">Projects</a></li>
-<li>SCM Repositories</li>
+            <metric name="Test Suite" abbreviation="TS" type="aggregate">
+                <value>
+                    <metric abbreviation="TCU" significance="1"/>
+                </value>
 
-<li>
-<a href="/viewvc/xradar/">
+                <metric name="Unit Test Coverage" abbreviation="TCU" type="value">
+                    <value>
+                        <stat group="test-metrics" value="source-statements-covered"/>
+                        <operator value="divide"/>
+                        <stat group="source-metrics" value="ncss"/>
+                    </value>
+                </metric>
+            </metric>
 
-xradar</a>
-</li>
+            <metric name="Architecture" abbreviation="ARCH" type="aggregate">
+                <value>
+                    <metric abbreviation="MOD" significance="0.4"/>
+                    <metric abbreviation="COH" significance="0.6"/>
+                </value>
 
-<li>
-<a href="/viewvc/xradar/trunk/">
+                <metric name="Modularisation" abbreviation="MOD" type="value">
+                    <value>
+                        <number value="1"/>
+                        <operator value="subtract"/>
+                        <value>
+                            <count group="dependancy-metrics" value="illegal-dependencies" condition-not-value="0"/>
+                            <operator value="divide"/>
+                            <packages/>
+                        </value>
+                    </value>
+                </metric>
 
-trunk</a>
-</li>
+                <metric name="Cohesion" abbreviation="COH" type="value">
+                    <value>
+                        <number value="1"/>
+                        <operator value="subtract"/>
+                        <value>
+                            <count group="package-oo-metrics" value="cycles" condition-value="true"/>
+                            <operator value="divide"/>
+                            <packages/>
+                        </value>
+                    </value>
+                </metric>
+            </metric>
 
-<li>
-<a href="/viewvc/xradar/trunk/xradar/">
+            <metric name="Code Quality" abbreviation="CODE" type="aggregate">
+                <value>
+                    <metric abbreviation="DOC" significance="0.15"/>
+                    <metric abbreviation="DRY" significance="0.4"/>
+                    <metric abbreviation="FRE" significance="0.3"/>
+                    <metric abbreviation="STY" significance="0.15"/>
+                </value>
 
-xradar</a>
-</li>
+                <metric name="Documentation" abbreviation="DOC" type="value">
+                    <value>
+                        <stat group="documentation-metrics" value="javadocs"/>
+                        <operator value="divide"/>
+                        <value>
+                            <stat group="source-metrics" value="functions"/>
+                            <operator value="add"/>
+                            <stat group="source-metrics" value="analysed-classes"/>
+                        </value>
+                    </value>
+                </metric>
 
-<li>
-<a href="/viewvc/xradar/trunk/xradar/etc/">
+                <metric name="DRYness" abbreviation="DRY" type="value">
+                    <value>
+                        <number value="1"/>
+                        <operator value="subtract"/>
+                        <value>
+                            <stat group="duplication-metrics" value="classes-with-duplications"/>
+                            <operator value="divide"/>
+                            <stat group="source-metrics" value="analysed-classes"/>
+                        </value>
+                    </value>
+                </metric>
 
-etc</a>
-</li>
+                <metric name="Freshness" abbreviation="FRE" type="value">
+                    <value>
+                        <number value="1"/>
+                        <operator value="subtract"/>
+                        <value>
+                            <stat group="source-metrics" value="classes-with-code-violations"/>
+                            <operator value="divide"/>
+                            <stat group="source-metrics" value="analysed-classes"/>
+                        </value>
+                    </value>
+                </metric>
 
-<li>
-<a href="/viewvc/xradar/trunk/xradar/etc/config/">
+                <metric name="Stylishness" abbreviation="STY" type="value">
+                    <value>
+                        <number value="1"/>
+                        <operator value="subtract"/>
+                        <value>
+                            <stat group="source-metrics" value="classes-with-style-errors"/>
+                            <operator value="divide"/>
+                            <stat group="source-metrics" value="analysed-classes"/>
+                        </value>
+                    </value>
+                </metric>
+            </metric>
 
-config</a>
-</li>
-
-<li>
-<a href="/viewvc/xradar/trunk/xradar/etc/config/xradar-config-default.xml?view=log">
-
-xradar-config-default.xml</a>
-</li>
-
-</ul>
-
-</td>
-</tr>
-</table>
-
-
-<table cellpadding="5"><tr><td>
-<h1>View of /trunk/xradar/etc/config/xradar-config-default.xml</h1>
-
-<p style="margin:0;">
-
-<a href="/viewvc/xradar/trunk/xradar/etc/config/"><img src="/viewvc-static/images/back_small.png" width="16" height="16" alt="Parent Directory" /> Parent Directory</a>
-
-| <a href="/viewvc/xradar/trunk/xradar/etc/config/xradar-config-default.xml?view=log"><img src="/viewvc-static/images/log.png" width="16" height="16" alt="Revision Log" /> Revision Log</a>
-
-
-
-
-</p>
-
-<hr />
-<div class="vc_summary">
-Revision <a href="/viewvc/xradar?view=rev&amp;revision=284"><strong>284</strong></a> -
-(<a href="/viewvc/xradar/trunk/xradar/etc/config/xradar-config-default.xml?revision=284"><strong>download</strong></a>)
-(<a href="/viewvc/xradar/trunk/xradar/etc/config/xradar-config-default.xml?revision=284&amp;content-type=text%2Fplain"><strong>as text</strong></a>)
-(<a href="/viewvc/xradar/trunk/xradar/etc/config/xradar-config-default.xml?annotate=284"><strong>annotate</strong></a>)
-
-<br /><em>Mon Jul 11 20:44:07 2005 UTC</em>
-(3 years ago)
-by <em>kristofferkvam</em>
-
-
-
-
-
-
-<br />File size: 7558 byte(s)
-
-
-
-<pre class="vc_log">Added default config and added some echo's to the statics.xml
-</pre>
-
-</div>
-<div id="vc_markup"><pre><a id="l_1"></a><span class="hl line">    1 </span>&lt;?xml <span class="hl kwb">version</span>=<span class="hl str">&quot;1.0&quot;</span> <span class="hl kwb">encoding</span>=<span class="hl str">&quot;UTF-8&quot;</span>?<span class="hl kwa">&gt;</span>
-<a id="l_2"></a><span class="hl line">    2 </span><span class="hl com">&lt;!-- =======================================================================</span>
-<a id="l_3"></a><span class="hl line">    3 </span><span class="hl com">XRadar</span>
-<a id="l_4"></a><span class="hl line">    4 </span><span class="hl com">Copyright (c) 2004, 2005, Kristoffer Kvam</span>
-<a id="l_5"></a><span class="hl line">    5 </span><span class="hl com">All rights reserved.</span>
-<a id="l_6"></a><span class="hl line">    6 </span><span class="hl com"></span>
-<a id="l_7"></a><span class="hl line">    7 </span><span class="hl com">Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
-<a id="l_8"></a><span class="hl line">    8 </span><span class="hl com"></span>
-<a id="l_9"></a><span class="hl line">    9 </span><span class="hl com">Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span>
-<a id="l_10"></a><span class="hl line">   10 </span><span class="hl com">Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</span>
-<a id="l_11"></a><span class="hl line">   11 </span><span class="hl com">Neither the name of Kristoffer Kvam nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</span>
-<a id="l_12"></a><span class="hl line">   12 </span><span class="hl com"></span>
-<a id="l_13"></a><span class="hl line">   13 </span><span class="hl com">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
-<a id="l_14"></a><span class="hl line">   14 </span><span class="hl com"></span>
-<a id="l_15"></a><span class="hl line">   15 </span><span class="hl com">See licence.txt for dependancies to other open projects.</span>
-<a id="l_16"></a><span class="hl line">   16 </span><span class="hl com">======================================================================= --&gt;</span>
-<a id="l_17"></a><span class="hl line">   17 </span>
-<a id="l_18"></a><span class="hl line">   18 </span><span class="hl com">&lt;!-- This is a dummy config that splits the system into one module. Use this as a template, when building your own modules --&gt;</span>
-<a id="l_19"></a><span class="hl line">   19 </span><span class="hl kwa">&lt;radar</span>-config<span class="hl kwa">&gt;</span>
-<a id="l_20"></a><span class="hl line">   20 </span>    <span class="hl kwa">&lt;skip</span>-packages<span class="hl kwa">&gt;</span>
-<a id="l_21"></a><span class="hl line">   21 </span>        <span class="hl com">&lt;!--package-root value=&quot;..&quot; recurse=&quot;false&quot;/--&gt;</span>
-<a id="l_22"></a><span class="hl line">   22 </span>    <span class="hl kwa">&lt;/skip</span>-packages<span class="hl kwa">&gt;</span>
-<a id="l_23"></a><span class="hl line">   23 </span>	<span class="hl kwa">&lt;subsystems&gt;</span>
-<a id="l_24"></a><span class="hl line">   24 </span>		<span class="hl kwa">&lt;subsystem</span> <span class="hl kwb">id</span>=<span class="hl str">&quot;All&quot;</span> <span class="hl kwb">level</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_25"></a><span class="hl line">   25 </span>			<span class="hl kwa">&lt;name&gt;</span>The system<span class="hl kwa">&lt;/name&gt;</span>
-<a id="l_26"></a><span class="hl line">   26 </span>            <span class="hl kwa">&lt;description&gt;</span>The system. Split this further into modules.<span class="hl kwa">&lt;/description&gt;</span>
-<a id="l_27"></a><span class="hl line">   27 </span>			<span class="hl kwa">&lt;included</span>-packages<span class="hl kwa">&gt;</span>
-<a id="l_28"></a><span class="hl line">   28 </span>				<span class="hl kwa">&lt;package</span>-root <span class="hl kwb">value</span>=<span class="hl str">&quot;&quot;</span> <span class="hl kwb">recurse</span>=<span class="hl str">&quot;true&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_29"></a><span class="hl line">   29 </span>			<span class="hl kwa">&lt;/included</span>-packages<span class="hl kwa">&gt;</span>
-<a id="l_30"></a><span class="hl line">   30 </span>			<span class="hl kwa">&lt;legal</span>-subordinates<span class="hl kwa">&gt;</span>
-<a id="l_31"></a><span class="hl line">   31 </span>				<span class="hl kwa">&lt;subsystem</span> <span class="hl kwb">id</span>=<span class="hl str">&quot;All&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_32"></a><span class="hl line">   32 </span>			<span class="hl kwa">&lt;/legal</span>-subordinates<span class="hl kwa">&gt;</span>
-<a id="l_33"></a><span class="hl line">   33 </span>		<span class="hl kwa">&lt;/subsystem&gt;</span>
-<a id="l_34"></a><span class="hl line">   34 </span>	<span class="hl kwa">&lt;/subsystems&gt;</span>
-<a id="l_35"></a><span class="hl line">   35 </span>
-<a id="l_36"></a><span class="hl line">   36 </span>    <span class="hl kwa">&lt;defined</span>-metrics<span class="hl kwa">&gt;</span>
-<a id="l_37"></a><span class="hl line">   37 </span>        <span class="hl kwa">&lt;thresholds&gt;</span>
-<a id="l_38"></a><span class="hl line">   38 </span>            <span class="hl kwa">&lt;threshold</span> <span class="hl kwb">level</span>=<span class="hl str">&quot;1&quot;</span> <span class="hl kwb">max-value</span>=<span class="hl str">&quot;0.5&quot;</span> <span class="hl kwb">color</span>=<span class="hl str">&quot;#FE9F34&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_39"></a><span class="hl line">   39 </span>            <span class="hl kwa">&lt;threshold</span> <span class="hl kwb">level</span>=<span class="hl str">&quot;2&quot;</span> <span class="hl kwb">max-value</span>=<span class="hl str">&quot;0.8&quot;</span> <span class="hl kwb">color</span>=<span class="hl str">&quot;yellow&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_40"></a><span class="hl line">   40 </span>            <span class="hl kwa">&lt;threshold</span> <span class="hl kwb">level</span>=<span class="hl str">&quot;3&quot;</span> <span class="hl kwb">max-value</span>=<span class="hl str">&quot;1.1&quot;</span> <span class="hl kwb">color</span>=<span class="hl str">&quot;#BFDE1D&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_41"></a><span class="hl line">   41 </span>        <span class="hl kwa">&lt;/thresholds&gt;</span>
-<a id="l_42"></a><span class="hl line">   42 </span>        <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Total Quality&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;TQ&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;aggregate&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_43"></a><span class="hl line">   43 </span>            <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_44"></a><span class="hl line">   44 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;ARCH&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.35&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_45"></a><span class="hl line">   45 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;CODE&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.30&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_46"></a><span class="hl line">   46 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;TS&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.35&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_47"></a><span class="hl line">   47 </span>            <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_48"></a><span class="hl line">   48 </span>
-<a id="l_49"></a><span class="hl line">   49 </span>            <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Test Suite&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;TS&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;aggregate&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_50"></a><span class="hl line">   50 </span>                <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_51"></a><span class="hl line">   51 </span>                    <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;TCU&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_52"></a><span class="hl line">   52 </span>                <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_53"></a><span class="hl line">   53 </span>
-<a id="l_54"></a><span class="hl line">   54 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Unit Test Coverage&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;TCU&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;value&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_55"></a><span class="hl line">   55 </span>                    <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_56"></a><span class="hl line">   56 </span>                        <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;test-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;source-statements-covered&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_57"></a><span class="hl line">   57 </span>                        <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;divide&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_58"></a><span class="hl line">   58 </span>                        <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;ncss&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_59"></a><span class="hl line">   59 </span>                    <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_60"></a><span class="hl line">   60 </span>                <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_61"></a><span class="hl line">   61 </span>            <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_62"></a><span class="hl line">   62 </span>
-<a id="l_63"></a><span class="hl line">   63 </span>            <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Architecture&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;ARCH&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;aggregate&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_64"></a><span class="hl line">   64 </span>                <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_65"></a><span class="hl line">   65 </span>                    <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;MOD&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.4&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_66"></a><span class="hl line">   66 </span>                    <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;COH&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.6&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_67"></a><span class="hl line">   67 </span>                <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_68"></a><span class="hl line">   68 </span>
-<a id="l_69"></a><span class="hl line">   69 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Modularisation&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;MOD&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;value&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_70"></a><span class="hl line">   70 </span>                    <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_71"></a><span class="hl line">   71 </span>                        <span class="hl kwa">&lt;number</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_72"></a><span class="hl line">   72 </span>                        <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;subtract&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_73"></a><span class="hl line">   73 </span>                        <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_74"></a><span class="hl line">   74 </span>                            <span class="hl kwa">&lt;count</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;dependancy-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;illegal-dependencies&quot;</span> <span class="hl kwb">condition-not-value</span>=<span class="hl str">&quot;0&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_75"></a><span class="hl line">   75 </span>                            <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;divide&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_76"></a><span class="hl line">   76 </span>                            <span class="hl kwa">&lt;packages/&gt;</span>
-<a id="l_77"></a><span class="hl line">   77 </span>                        <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_78"></a><span class="hl line">   78 </span>                    <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_79"></a><span class="hl line">   79 </span>                <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_80"></a><span class="hl line">   80 </span>
-<a id="l_81"></a><span class="hl line">   81 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Cohesion&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;COH&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;value&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_82"></a><span class="hl line">   82 </span>                    <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_83"></a><span class="hl line">   83 </span>                        <span class="hl kwa">&lt;number</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_84"></a><span class="hl line">   84 </span>                        <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;subtract&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_85"></a><span class="hl line">   85 </span>                        <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_86"></a><span class="hl line">   86 </span>                            <span class="hl kwa">&lt;count</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;package-oo-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;cycles&quot;</span> <span class="hl kwb">condition-value</span>=<span class="hl str">&quot;true&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_87"></a><span class="hl line">   87 </span>                            <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;divide&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_88"></a><span class="hl line">   88 </span>                            <span class="hl kwa">&lt;packages/&gt;</span>
-<a id="l_89"></a><span class="hl line">   89 </span>                        <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_90"></a><span class="hl line">   90 </span>                    <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_91"></a><span class="hl line">   91 </span>                <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_92"></a><span class="hl line">   92 </span>            <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_93"></a><span class="hl line">   93 </span>
-<a id="l_94"></a><span class="hl line">   94 </span>            <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Code Quality&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;CODE&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;aggregate&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_95"></a><span class="hl line">   95 </span>                <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_96"></a><span class="hl line">   96 </span>                    <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;DOC&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.15&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_97"></a><span class="hl line">   97 </span>                    <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;DRY&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.4&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_98"></a><span class="hl line">   98 </span>                    <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;FRE&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.3&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_99"></a><span class="hl line">   99 </span>                    <span class="hl kwa">&lt;metric</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;STY&quot;</span> <span class="hl kwb">significance</span>=<span class="hl str">&quot;0.15&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_100"></a><span class="hl line">  100 </span>                <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_101"></a><span class="hl line">  101 </span>
-<a id="l_102"></a><span class="hl line">  102 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Documentation&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;DOC&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;value&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_103"></a><span class="hl line">  103 </span>                    <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_104"></a><span class="hl line">  104 </span>                        <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;documentation-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;javadocs&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_105"></a><span class="hl line">  105 </span>                        <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;divide&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_106"></a><span class="hl line">  106 </span>                        <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_107"></a><span class="hl line">  107 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;functions&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_108"></a><span class="hl line">  108 </span>                            <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;add&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_109"></a><span class="hl line">  109 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;analysed-classes&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_110"></a><span class="hl line">  110 </span>                        <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_111"></a><span class="hl line">  111 </span>                    <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_112"></a><span class="hl line">  112 </span>                <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_113"></a><span class="hl line">  113 </span>
-<a id="l_114"></a><span class="hl line">  114 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;DRYness&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;DRY&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;value&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_115"></a><span class="hl line">  115 </span>                    <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_116"></a><span class="hl line">  116 </span>                        <span class="hl kwa">&lt;number</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_117"></a><span class="hl line">  117 </span>                        <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;subtract&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_118"></a><span class="hl line">  118 </span>                        <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_119"></a><span class="hl line">  119 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;duplication-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;classes-with-duplications&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_120"></a><span class="hl line">  120 </span>                            <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;divide&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_121"></a><span class="hl line">  121 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;analysed-classes&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_122"></a><span class="hl line">  122 </span>                        <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_123"></a><span class="hl line">  123 </span>                    <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_124"></a><span class="hl line">  124 </span>                <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_125"></a><span class="hl line">  125 </span>
-<a id="l_126"></a><span class="hl line">  126 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Freshness&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;FRE&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;value&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_127"></a><span class="hl line">  127 </span>                    <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_128"></a><span class="hl line">  128 </span>                        <span class="hl kwa">&lt;number</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_129"></a><span class="hl line">  129 </span>                        <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;subtract&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_130"></a><span class="hl line">  130 </span>                        <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_131"></a><span class="hl line">  131 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;classes-with-code-violations&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_132"></a><span class="hl line">  132 </span>                            <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;divide&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_133"></a><span class="hl line">  133 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;analysed-classes&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_134"></a><span class="hl line">  134 </span>                        <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_135"></a><span class="hl line">  135 </span>                    <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_136"></a><span class="hl line">  136 </span>                <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_137"></a><span class="hl line">  137 </span>
-<a id="l_138"></a><span class="hl line">  138 </span>                <span class="hl kwa">&lt;metric</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;Stylishness&quot;</span> <span class="hl kwb">abbreviation</span>=<span class="hl str">&quot;STY&quot;</span> <span class="hl kwb">type</span>=<span class="hl str">&quot;value&quot;</span><span class="hl kwa">&gt;</span>
-<a id="l_139"></a><span class="hl line">  139 </span>                    <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_140"></a><span class="hl line">  140 </span>                        <span class="hl kwa">&lt;number</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_141"></a><span class="hl line">  141 </span>                        <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;subtract&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_142"></a><span class="hl line">  142 </span>                        <span class="hl kwa">&lt;value&gt;</span>
-<a id="l_143"></a><span class="hl line">  143 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;classes-with-style-errors&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_144"></a><span class="hl line">  144 </span>                            <span class="hl kwa">&lt;operator</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;divide&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_145"></a><span class="hl line">  145 </span>                            <span class="hl kwa">&lt;stat</span> <span class="hl kwb">group</span>=<span class="hl str">&quot;source-metrics&quot;</span> <span class="hl kwb">value</span>=<span class="hl str">&quot;analysed-classes&quot;</span><span class="hl kwa">/&gt;</span>
-<a id="l_146"></a><span class="hl line">  146 </span>                        <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_147"></a><span class="hl line">  147 </span>                    <span class="hl kwa">&lt;/value&gt;</span>
-<a id="l_148"></a><span class="hl line">  148 </span>                <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_149"></a><span class="hl line">  149 </span>            <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_150"></a><span class="hl line">  150 </span>
-<a id="l_151"></a><span class="hl line">  151 </span>        <span class="hl kwa">&lt;/metric&gt;</span>
-<a id="l_152"></a><span class="hl line">  152 </span>    <span class="hl kwa">&lt;/defined</span>-metrics<span class="hl kwa">&gt;</span>
-<a id="l_153"></a><span class="hl line">  153 </span><span class="hl kwa">&lt;/radar</span>-config<span class="hl kwa">&gt;</span>
-</pre></div>
-
-</td></tr></table>
-<hr />
-<table>
-<tr>
-<td>Powered by <a href="http://viewvc.tigris.org/">ViewVC 1.0.5</a></td>
-<td style="text-align: right;"><strong><a href="/viewvc-static/help_rootview.html">ViewVC Help</a></strong></td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-<td style="text-align: right;">&nbsp;</td>
-</tr>
-</table>
-</body>
-</html>
-
+        </metric>
+    </defined-metrics>
+</radar-config>
