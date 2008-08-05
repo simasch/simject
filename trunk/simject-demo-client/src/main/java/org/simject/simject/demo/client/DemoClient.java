@@ -9,29 +9,30 @@ import org.simject.demo.service.EmployeeService;
 
 public final class DemoClient {
 
-	private final static Logger logger = Logger.getLogger(DemoClient.class);
+    private final static Logger logger = Logger.getLogger(DemoClient.class);
 
-	// Avoid construction of DemoClient
-	private DemoClient() {
-	}
+    // Avoid construction of DemoClient
+    private DemoClient() {
+    }
 
-	/**
-	 * @param args
-	 */
-	public static void main(final String[] args) {
-		final SimFactory factory = new SimFactory("resources.xml");
+    /**
+     * @param args
+     */
+    public static void main(final String[] args) {
+        final SimFactory factory = new SimFactory("resources.xml");
 
-		final EmployeeService service = factory.getResource(EmployeeService.class);
-		final Employee employee = new Employee();
-		employee.setName("Simon Martinelli");
+        final EmployeeService service = factory
+                .getResource(EmployeeService.class);
+        final Employee employee = new Employee();
+        employee.setName("Simon Martinelli");
 
-		service.insertEmployee(employee);
+        service.insertEmployee(employee);
 
-		final List<Employee> list = service.listEmployees();
-		for (Employee employee2 : list) {
-			logger.info(employee2);
-		}
+        final List<Employee> list = service.listEmployees();
+        for (Employee employee2 : list) {
+            logger.info(employee2);
+        }
 
-	}
+    }
 
 }
