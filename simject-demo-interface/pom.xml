@@ -3,7 +3,6 @@
 	<artifactId>simject-demo-interface</artifactId>
 	<packaging>jar</packaging>
 	<name>simject-demo-interface</name>
-	<url>http://maven.apache.org</url>
 	<parent>
 		<artifactId>simject-demo-parent</artifactId>
 		<groupId>org.simject</groupId>
