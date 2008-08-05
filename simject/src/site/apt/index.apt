@@ -4,12 +4,10 @@ If you are looking for a simple IOC container with JPA and remoting support - tr
 
   During my private studies on dependency injection (DI), dynamic proxy, remoting, Maven2 and JPA I started to create a small very simple dependency injection framework with some basic features.  I then decided to make it available for every one - maybe someone can use it.
 
-  I named it simject: SIMple (or SIMons;-) dependency inJECTion. The main goal is to provide DI support in Batch or FatClient applications. In Java EE applications I recommend the use of EJB3 DI. 
-  simject has some basic features that I need in my every day work and it is, compared with complex full featured DI frameworks, very easy to use.
+  I named it simject: SIMple (or SIMons;-) dependency inJECTion. The main goal is to provide DI support in Batch or FatClient applications. In Java EE applications I recommend the use of EJB3 DI. simject has some basic features that I need in my every day work and it is, compared with complex full featured DI frameworks, very easy to use.
 
   Below you will find a short introduction with some basic information. 
-  There is also a more comprehensive examples in the {{{http://code.google.com/p/simject/wiki/UsersGuide}UsersGuide}}. The hole example is available in the {{{http://code.google.com/p/simject/source/checkout}Subversion repository}}.
-
+  There is also a more comprehensive examples in the {{{http://code.google.com/p/simject/wiki/UsersGuide}UsersGuide}}. The hole example is available in the {{{http://code.google.com/p/simject/source/checkout}Subversion repository}}.\
   simject is available for download in the {{{http://code.google.com/p/simject/downloads/list}Downloads section}}.
 
   Have fun!
