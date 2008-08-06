@@ -4,7 +4,7 @@
 	<artifactId>simject-demo-build</artifactId>
 	<packaging>pom</packaging>
 	<version>1.3.0-SNAPSHOT</version>
-	<name>simject-demo-eclipse-build</name>
+	<name>simject-demo-build</name>
 	<modules>
 		<module>../simject-demo-interface</module>
 		<module>../simject-demo-client</module>
