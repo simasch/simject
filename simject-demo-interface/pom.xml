@@ -4,7 +4,7 @@
 	<packaging>jar</packaging>
 	<name>simject-demo-interface</name>
 	<parent>
-		<artifactId>simject-demo-parent</artifactId>
+		<artifactId>simject-parent</artifactId>
 		<groupId>org.simject</groupId>
 		<version>1.3.0-SNAPSHOT</version>
 	</parent>
