@@ -1,153 +1,197 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- =======================================================================
-XRadar
-Copyright (c) 2004, 2005, Kristoffer Kvam
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-Neither the name of Kristoffer Kvam nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-See licence.txt for dependancies to other open projects.
-======================================================================= -->
-
-<!-- This is a dummy config that splits the system into one module. Use this as a template, when building your own modules -->
-<radar-config>
-    <skip-packages>
+	<!--
+		=======================================================================
+		XRadar Copyright (c) 2004, 2005, Kristoffer Kvam All rights reserved.
+		Redistribution and use in source and binary forms, with or without
+		modification, are permitted provided that the following conditions are
+		met: Redistributions of source code must retain the above copyright
+		notice, this list of conditions and the following disclaimer.
+		Redistributions in binary form must reproduce the above copyright
+		notice, this list of conditions and the following disclaimer in the
+		documentation and/or other materials provided with the distribution.
+		Neither the name of Kristoffer Kvam nor the names of its contributors
+		may be used to endorse or promote products derived from this software
+		without specific prior written permission. THIS SOFTWARE IS PROVIDED
+		BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+		IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+		WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+		DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+		LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+		CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+		SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+		BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+		WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+		OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+		IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. See licence.txt for
+		dependancies to other open projects.
+		=======================================================================
+	-->
+	<!--
+		This is a dummy config that splits the system into one module. Use
+		this as a template, when building your own modules
+	-->
+<radar-config name="simject-demo">
+	<skip-packages>
         <!--package-root value=".." recurse="false"/-->
-    </skip-packages>
+	</skip-packages>
 	<subsystems>
-		<subsystem id="All" level="1">
-			<name>simject factory</name>
-            <description></description>
+		<subsystem id="client" level="1">
+			<name>client</name>
 			<included-packages>
-				<package-root value="" recurse="true"/>
+				<package-root value="org.simject.demo.client" recurse="true" />
 			</included-packages>
 			<legal-subordinates>
-				<subsystem id="All"/>
+				<subsystem id="client" />
+				<subsystem id="interface" />
+			</legal-subordinates>
+		</subsystem>
+		<subsystem id="model" level="1">
+			<name>model</name>
+			<included-packages>
+				<package-root value="org.simject.demo.model" recurse="true" />
+			</included-packages>
+			<legal-subordinates>
+				<subsystem id="model" />
+			</legal-subordinates>
+		</subsystem>
+		<subsystem id="service" level="2">
+			<name>service</name>
+			<included-packages>
+				<package-root value="org.simject.demo.service" recurse="false" />
+			</included-packages>
+			<legal-subordinates>
+				<subsystem id="service" />
+				<subsystem id="service-impl" />
+			</legal-subordinates>
+		</subsystem>
+		<subsystem id="service-impl" level="3">
+			<name>service-impl</name>
+			<included-packages>
+				<package-root value="org.simject.demo.service.impl"
+					recurse="true" />
+			</included-packages>
+			<legal-subordinates>
+				<subsystem id="service-impl" />
+				<subsystem id="business" />
+			</legal-subordinates>
+		</subsystem>
+		<subsystem id="business" level="4">
+			<name>business</name>
+			<included-packages>
+				<package-root value="org.simject.demo.business"
+					recurse="true" />
+			</included-packages>
+			<legal-subordinates>
+				<subsystem id="business" />
 			</legal-subordinates>
 		</subsystem>
 	</subsystems>
-
-    <defined-metrics>
-        <thresholds>
-            <threshold level="1" max-value="0.5" color="#FE9F34"/>
-            <threshold level="2" max-value="0.8" color="yellow"/>
-            <threshold level="3" max-value="1.1" color="#BFDE1D"/>
-        </thresholds>
-        <metric name="Total Quality" abbreviation="TQ" type="aggregate">
-            <value>
-                <metric abbreviation="ARCH" significance="0.35"/>
-                <metric abbreviation="CODE" significance="0.30"/>
-                <metric abbreviation="TS" significance="0.35"/>                
-            </value>
-
-            <metric name="Test Suite" abbreviation="TS" type="aggregate">
-                <value>
-                    <metric abbreviation="TCU" significance="1"/>
-                </value>
-
-                <metric name="Unit Test Coverage" abbreviation="TCU" type="value">
-                    <value>
-                        <stat group="test-metrics" value="source-statements-covered"/>
-                        <operator value="divide"/>
-                        <stat group="source-metrics" value="ncss"/>
-                    </value>
-                </metric>
-            </metric>
-
-            <metric name="Architecture" abbreviation="ARCH" type="aggregate">
-                <value>
-                    <metric abbreviation="MOD" significance="0.4"/>
-                    <metric abbreviation="COH" significance="0.6"/>
-                </value>
-
-                <metric name="Modularisation" abbreviation="MOD" type="value">
-                    <value>
-                        <number value="1"/>
-                        <operator value="subtract"/>
-                        <value>
-                            <count group="dependancy-metrics" value="illegal-dependencies" condition-not-value="0"/>
-                            <operator value="divide"/>
-                            <packages/>
-                        </value>
-                    </value>
-                </metric>
-
-                <metric name="Cohesion" abbreviation="COH" type="value">
-                    <value>
-                        <number value="1"/>
-                        <operator value="subtract"/>
-                        <value>
-                            <count group="package-oo-metrics" value="cycles" condition-value="true"/>
-                            <operator value="divide"/>
-                            <packages/>
-                        </value>
-                    </value>
-                </metric>
-            </metric>
-
-            <metric name="Code Quality" abbreviation="CODE" type="aggregate">
-                <value>
-                    <metric abbreviation="DOC" significance="0.15"/>
-                    <metric abbreviation="DRY" significance="0.4"/>
-                    <metric abbreviation="FRE" significance="0.3"/>
-                    <metric abbreviation="STY" significance="0.15"/>
-                </value>
-
-                <metric name="Documentation" abbreviation="DOC" type="value">
-                    <value>
-                        <stat group="documentation-metrics" value="javadocs"/>
-                        <operator value="divide"/>
-                        <value>
-                            <stat group="source-metrics" value="functions"/>
-                            <operator value="add"/>
-                            <stat group="source-metrics" value="analysed-classes"/>
-                        </value>
-                    </value>
-                </metric>
-
-                <metric name="DRYness" abbreviation="DRY" type="value">
-                    <value>
-                        <number value="1"/>
-                        <operator value="subtract"/>
-                        <value>
-                            <stat group="duplication-metrics" value="classes-with-duplications"/>
-                            <operator value="divide"/>
-                            <stat group="source-metrics" value="analysed-classes"/>
-                        </value>
-                    </value>
-                </metric>
-
-                <metric name="Freshness" abbreviation="FRE" type="value">
-                    <value>
-                        <number value="1"/>
-                        <operator value="subtract"/>
-                        <value>
-                            <stat group="source-metrics" value="classes-with-code-violations"/>
-                            <operator value="divide"/>
-                            <stat group="source-metrics" value="analysed-classes"/>
-                        </value>
-                    </value>
-                </metric>
-
-                <metric name="Stylishness" abbreviation="STY" type="value">
-                    <value>
-                        <number value="1"/>
-                        <operator value="subtract"/>
-                        <value>
-                            <stat group="source-metrics" value="classes-with-style-errors"/>
-                            <operator value="divide"/>
-                            <stat group="source-metrics" value="analysed-classes"/>
-                        </value>
-                    </value>
-                </metric>
-            </metric>
-
-        </metric>
-    </defined-metrics>
+	<defined-metrics>
+		<thresholds>
+			<threshold level="1" max-value="0.5" color="#FE9F34" />
+			<threshold level="2" max-value="0.8" color="yellow" />
+			<threshold level="3" max-value="1.1" color="#BFDE1D" />
+		</thresholds>
+		<metric name="Total Quality" abbreviation="TQ" type="aggregate">
+			<value>
+				<metric abbreviation="ARCH" significance="0.35" />
+				<metric abbreviation="CODE" significance="0.30" />
+				<metric abbreviation="TS" significance="0.35" />
+			</value>
+			<metric name="Test Suite" abbreviation="TS" type="aggregate">
+				<value>
+					<metric abbreviation="TCU" significance="1" />
+				</value>
+				<metric name="Unit Test Coverage" abbreviation="TCU" type="value">
+					<value>
+						<stat group="test-metrics" value="source-statements-covered" />
+						<operator value="divide" />
+						<stat group="source-metrics" value="ncss" />
+					</value>
+				</metric>
+			</metric>
+			<metric name="Architecture" abbreviation="ARCH" type="aggregate">
+				<value>
+					<metric abbreviation="MOD" significance="0.4" />
+					<metric abbreviation="COH" significance="0.6" />
+				</value>
+				<metric name="Modularisation" abbreviation="MOD" type="value">
+					<value>
+						<number value="1" />
+						<operator value="subtract" />
+						<value>
+							<count group="dependancy-metrics" value="illegal-dependencies"
+								condition-not-value="0" />
+							<operator value="divide" />
+							<packages />
+						</value>
+					</value>
+				</metric>
+				<metric name="Cohesion" abbreviation="COH" type="value">
+					<value>
+						<number value="1" />
+						<operator value="subtract" />
+						<value>
+							<count group="package-oo-metrics" value="cycles"
+								condition-value="true" />
+							<operator value="divide" />
+							<packages />
+						</value>
+					</value>
+				</metric>
+			</metric>
+			<metric name="Code Quality" abbreviation="CODE" type="aggregate">
+				<value>
+					<metric abbreviation="DOC" significance="0.15" />
+					<metric abbreviation="DRY" significance="0.4" />
+					<metric abbreviation="FRE" significance="0.3" />
+					<metric abbreviation="STY" significance="0.15" />
+				</value>
+				<metric name="Documentation" abbreviation="DOC" type="value">
+					<value>
+						<stat group="documentation-metrics" value="javadocs" />
+						<operator value="divide" />
+						<value>
+							<stat group="source-metrics" value="functions" />
+							<operator value="add" />
+							<stat group="source-metrics" value="analysed-classes" />
+						</value>
+					</value>
+				</metric>
+				<metric name="DRYness" abbreviation="DRY" type="value">
+					<value>
+						<number value="1" />
+						<operator value="subtract" />
+						<value>
+							<stat group="duplication-metrics" value="classes-with-duplications" />
+							<operator value="divide" />
+							<stat group="source-metrics" value="analysed-classes" />
+						</value>
+					</value>
+				</metric>
+				<metric name="Freshness" abbreviation="FRE" type="value">
+					<value>
+						<number value="1" />
+						<operator value="subtract" />
+						<value>
+							<stat group="source-metrics" value="classes-with-code-violations" />
+							<operator value="divide" />
+							<stat group="source-metrics" value="analysed-classes" />
+						</value>
+					</value>
+				</metric>
+				<metric name="Stylishness" abbreviation="STY" type="value">
+					<value>
+						<number value="1" />
+						<operator value="subtract" />
+						<value>
+							<stat group="source-metrics" value="classes-with-style-errors" />
+							<operator value="divide" />
+							<stat group="source-metrics" value="analysed-classes" />
+						</value>
+					</value>
+				</metric>
+			</metric>
+		</metric>
+	</defined-metrics>
 </radar-config>
