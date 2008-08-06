@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="simject - simple dependecy injection">
-  <body>
+	<body>
+		<head>
+			<script type="text/javascript">var gaJsHost = (("https:" ==	document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));</script>
+			<script type="text/javascript">var pageTracker = _gat._getTracker("UA-5113317-2"); pageTracker._trackPageview();</script>
+		</head>
 	<links>
       <item name="simject@Google Code" href="http://code.google.com/p/simject/" />
     </links>
