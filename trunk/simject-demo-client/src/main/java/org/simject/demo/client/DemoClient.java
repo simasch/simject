@@ -1,4 +1,4 @@
-package org.simject.simject.demo.client;
+package org.simject.demo.client;
 
 import java.util.List;
 
