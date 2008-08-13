@@ -6,7 +6,7 @@ import org.simject.demo.model.Employee;
 
 public interface EmployeeService {
 
-    List<Employee> listEmployees();
+	List<Employee> listEmployees();
 
-    void insertEmployee(Employee employee);
+	void insertEmployee(Employee employee);
 }
