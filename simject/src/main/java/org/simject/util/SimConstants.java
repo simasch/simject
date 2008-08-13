@@ -22,11 +22,11 @@ package org.simject.util;
  */
 public final class SimConstants {
 
-    public final static String DEFAULT_DIRECTORY = "META-INF/";
+	public final static String DEFAULT_DIRECTORY = "META-INF/";
 
-    public final static String PARAM_METHOD = "method";
+	public final static String PARAM_METHOD = "method";
 
-    public final static String PARAM_TYPES = "types";
+	public final static String PARAM_TYPES = "types";
 
-    public final static String PARAM_TYPE_DELIM = ",";
+	public final static String PARAM_TYPE_DELIM = ",";
 }

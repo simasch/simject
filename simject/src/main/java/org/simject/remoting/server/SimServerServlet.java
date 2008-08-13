@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
@@ -43,235 +44,231 @@ import com.thoughtworks.xstream.XStream;
 @SuppressWarnings("serial")
 public class SimServerServlet extends HttpServlet {
 
-    private final static Logger logger = Logger
-            .getLogger(SimServerServlet.class);
+	private final static Logger logger = Logger
+			.getLogger(SimServerServlet.class);
 
-    /**
-     * Context parameter that contains the configuration file location
-     */
-    private final static String SIMJECT_CONFIG = "simjectConfig";
+	/**
+	 * Context parameter that contains the configuration file location
+	 */
+	private final static String SIMJECT_CONFIG = "simjectConfig";
 
-    /**
-     * Reference to the SimFactory
-     */
-    private SimFactory simFactory;
+	/**
+	 * Reference to the SimFactory
+	 */
+	private SimFactory simFactory;
 
-    @Override
-    public void init() throws ServletException {
-        if (this.simFactory == null) {
-            // Get the context parameter with the config file
-            final String configFile = this.getServletContext()
-                    .getInitParameter(SIMJECT_CONFIG);
-            // create a SimFactory based on the config file
-            this.simFactory = new SimFactory(configFile);
-        }
-    }
+	@Override
+	public void init() throws ServletException {
+		if (this.simFactory == null) {
+			// Get the context parameter with the config file
+			final String configFile = this.getServletContext()
+					.getInitParameter(SIMJECT_CONFIG);
+			// create a SimFactory based on the config file
+			this.simFactory = new SimFactory(configFile);
+		}
+	}
 
-    @Override
-    protected void doPost(final HttpServletRequest req,
-            final HttpServletResponse resp) throws ServletException,
-            IOException {
-        this.invokeMethod(req, resp);
-    }
+	@Override
+	protected void doPost(final HttpServletRequest req,
+			final HttpServletResponse resp) throws ServletException,
+			IOException {
+		this.invokeMethod(req, resp);
+	}
 
-    /**
-     * Invokes a method based on the parameters passed from the client
-     * 
-     * @param req
-     * @param resp
-     * @param obj
-     * @param args
-     * @throws IOException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
-     */
-    private void invokeMethod(final HttpServletRequest req,
-            final HttpServletResponse resp) throws IOException {
+	/**
+	 * Invokes a method based on the parameters passed from the client
+	 * 
+	 * @param req
+	 * @param resp
+	 * @param obj
+	 * @param args
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
+	private void invokeMethod(final HttpServletRequest req,
+			final HttpServletResponse resp) throws IOException {
 
-        Object result = null;
-        try {
-            // get the classname
-            final String className = this.getClassName(req);
-            // create a Class instance
-            final Class<?> clazz = Class.forName(className);
-            // and get the resource from the SimFactory
-            final Object obj = this.simFactory.getResource(clazz);
-            // get passed arguments and invoke the method
-            final Object[] args = this.getArguments(req);
-            // get the method name from the HTTP header
-            final String methodString = req
-                    .getHeader(SimConstants.PARAM_METHOD);
-            logger.debug("methodString: " + methodString);
-            // get the parameter types from the HTTP header
-            final String paramTypesString = req
-                    .getHeader(SimConstants.PARAM_TYPES);
+		Object result = null;
+		try {
+			// get the classname
+			final String className = this.getClassName(req);
+			// create a Class instance
+			final Class<?> clazz = Class.forName(className);
+			// and get the resource from the SimFactory
+			final Object obj = this.simFactory.getResource(clazz);
+			// get passed arguments and invoke the method
+			final Object[] args = this.getArguments(req);
+			// get the method name from the HTTP header
+			final String methodString = req
+					.getHeader(SimConstants.PARAM_METHOD);
+			logger.debug("methodString: " + methodString);
+			// get the parameter types from the HTTP header
+			final String paramTypesString = req
+					.getHeader(SimConstants.PARAM_TYPES);
 
-            if (paramTypesString == null) {
-                // method without parameters to invoke
-                final Method method = obj.getClass().getMethod(methodString);
-                result = method.invoke(obj);
-            }
-            else {
-                // method with parameters should be called. Converts the string
-                // from the header to Class array
-                final Class<?>[] parameterTypes = this
-                        .getParameterTypes(paramTypesString);
-                final Method method = obj.getClass().getMethod(methodString,
-                        parameterTypes);
+			if (paramTypesString == null) {
+				// method without parameters to invoke
+				final Method method = obj.getClass().getMethod(methodString);
+				result = method.invoke(obj);
+			} else {
+				// method with parameters should be called. Converts the string
+				// from the header to Class array
+				final Class<?>[] parameterTypes = this
+						.getParameterTypes(paramTypesString);
+				final Method method = obj.getClass().getMethod(methodString,
+						parameterTypes);
 
-                logger.debug("args: " + args);
-                result = method.invoke(obj, args);
-                logger.debug("result: " + result);
-            }
-        }
-        catch (Exception e) {
-            // If an exception occurs during invocation put it in the result to
-            // have it serialized
-            result = e;
-        }
-        if (result != null) {
-            if (req.getContentType().equals(Protocol.Xml.getContentType())) {
-                logger.debug(Protocol.Xml.getContentType());
-                this.sendXmlResponse(resp, result);
-            }
-            else {
-                logger.debug(Protocol.Binary.getContentType());
-                this.sendBinaryResponse(resp, result);
-            }
-        }
-    }
+				logger.debug("args: " + args);
+				result = method.invoke(obj, args);
+				logger.debug("result: " + result);
+			}
+		} catch (Exception e) {
+			// If an exception occurs during invocation put it in the result to
+			// have it serialized
+			result = e;
+		}
+		if (result != null) {
+			if (req.getContentType().equals(Protocol.Xml.getContentType())) {
+				logger.debug(Protocol.Xml.getContentType());
+				this.sendXmlResponse(resp, result);
+			} else {
+				logger.debug(Protocol.Binary.getContentType());
+				this.sendBinaryResponse(resp, result);
+			}
+		}
+	}
 
-    /**
-     * Sends the result as binary stream
-     * 
-     * @param resp
-     * @param result
-     * @throws IOException
-     */
-    private void sendBinaryResponse(final HttpServletResponse resp,
-            final Object result) throws IOException {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(result);
-        oos.close();
+	/**
+	 * Sends the result as binary stream
+	 * 
+	 * @param resp
+	 * @param result
+	 * @throws IOException
+	 */
+	private void sendBinaryResponse(final HttpServletResponse resp,
+			final Object result) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(result);
+		oos.close();
 
-        resp.setContentType(Protocol.Binary.getContentType());
-        resp.getOutputStream().write(baos.toByteArray());
-    }
+		resp.setContentType(Protocol.Binary.getContentType());
+		resp.getOutputStream().write(baos.toByteArray());
+	}
 
-    /**
-     * Sends the result as XML stream
-     * 
-     * @param resp
-     * @param result
-     * @throws IOException
-     */
-    private void sendXmlResponse(final HttpServletResponse resp,
-            final Object result) throws IOException {
-        resp.setContentType(Protocol.Xml.getContentType());
-        final XStream xstream = new XStream();
-        final String xml = xstream.toXML(result);
-        resp.getWriter().write(xml);
-    }
+	/**
+	 * Sends the result as XML stream
+	 * 
+	 * @param resp
+	 * @param result
+	 * @throws IOException
+	 */
+	private void sendXmlResponse(final HttpServletResponse resp,
+			final Object result) throws IOException {
+		resp.setContentType(Protocol.Xml.getContentType());
+		final XStream xstream = new XStream();
+		final String xml = xstream.toXML(result);
+		resp.getWriter().write(xml);
+	}
 
-    /**
-     * Returns an array of Class containing the types of the parameters
-     * 
-     * @param parameterString
-     * @return
-     * @throws ClassNotFoundException
-     */
-    private Class<?>[] getParameterTypes(final String parameterString)
-            throws ClassNotFoundException {
-        Class<?>[] parameters = new Class[0];
-        if (parameterString != null) {
-            // The parameter types are seperated by ","
-            final StringTokenizer stokenizer = new StringTokenizer(
-                    parameterString, SimConstants.PARAM_TYPE_DELIM);
-            parameters = new Class[stokenizer.countTokens()];
-            int index = 0;
-            while (stokenizer.hasMoreTokens()) {
-                final String className = stokenizer.nextToken();
-                logger.debug("parameterTyp: " + className);
+	/**
+	 * Returns an array of Class containing the types of the parameters
+	 * 
+	 * @param parameterString
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	private Class<?>[] getParameterTypes(final String parameterString)
+			throws ClassNotFoundException {
+		Class<?>[] parameters = new Class[0];
+		if (parameterString != null) {
+			// The parameter types are seperated by ","
+			final StringTokenizer stokenizer = new StringTokenizer(
+					parameterString, SimConstants.PARAM_TYPE_DELIM);
+			parameters = new Class[stokenizer.countTokens()];
+			int index = 0;
+			while (stokenizer.hasMoreTokens()) {
+				final String className = stokenizer.nextToken();
+				logger.debug("parameterTyp: " + className);
 
-                final Class<?> clazz = Class.forName(className);
-                parameters[index] = clazz;
-                index++;
-            }
-        }
-        return parameters;
-    }
+				final Class<?> clazz = Class.forName(className);
+				parameters[index] = clazz;
+				index++;
+			}
+		}
+		return parameters;
+	}
 
-    /**
-     * Uses XStream to convert XML to Object
-     * 
-     * @param req
-     * @return
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private Object[] getArguments(final HttpServletRequest req)
-            throws IOException, ClassNotFoundException {
+	/**
+	 * Uses XStream to convert XML to Object
+	 * 
+	 * @param req
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	private Object[] getArguments(final HttpServletRequest req)
+			throws IOException, ClassNotFoundException {
 
-        Object args = null;
-        if (req.getContentType().equals(Protocol.Xml.getContentType())) {
-            final String xml = this.inputStreamToString(req.getInputStream());
-            final XStream xstream = new XStream();
-            args = xstream.fromXML(xml);
-        }
-        else {
-            final ObjectInputStream ois = new ObjectInputStream(req
-                    .getInputStream());
-            args = ois.readObject();
-        }
+		Object args = null;
+		if (req.getContentType().equals(Protocol.Xml.getContentType())) {
+			final String xml = this.inputStreamToString(req.getInputStream());
+			final XStream xstream = new XStream();
+			args = xstream.fromXML(xml);
+		} else {
+			final ObjectInputStream ois = new ObjectInputStream(req
+					.getInputStream());
+			args = ois.readObject();
+		}
 
-        return (Object[]) args;
-    }
+		return (Object[]) args;
+	}
 
-    /**
-     * Helper Method to convert InputStream to String
-     * 
-     * @param in
-     * @return
-     * @throws IOException
-     */
-    private String inputStreamToString(final InputStream istream)
-            throws IOException {
-        final StringBuffer out = new StringBuffer();
-        final byte[] bytes = new byte[4096];
-        for (int n; (n = istream.read(bytes)) != -1;) {
-            out.append(new String(bytes, 0, n)); // NOPMD
-        }
-        return out.toString();
-    }
+	/**
+	 * Helper Method to convert InputStream to String
+	 * 
+	 * @param in
+	 * @return
+	 * @throws IOException
+	 */
+	private String inputStreamToString(final InputStream istream)
+			throws IOException {
+		final StringBuffer out = new StringBuffer();
+		final byte[] bytes = new byte[4096];
+		for (int n; (n = istream.read(bytes)) != -1;) {
+			out.append(new String(bytes, 0, n)); // NOPMD
+		}
+		return out.toString();
+	}
 
-    /**
-     * Parses the class name out of the path info
-     * 
-     * @param req
-     * @return
-     */
-    private String getClassName(final HttpServletRequest req) {
-        final StringTokenizer stokenzier = new StringTokenizer(req
-                .getPathInfo(), "/");
-        String[] tokens = new String[stokenzier.countTokens()];
-        int index = 0;
-        while (stokenzier.hasMoreTokens()) {
-            tokens[index] = stokenzier.nextToken();
-            logger.debug("path token: " + tokens[index]);
-            index++;
-        }
-        return tokens[0];
-    }
+	/**
+	 * Parses the class name out of the path info
+	 * 
+	 * @param req
+	 * @return
+	 */
+	private String getClassName(final HttpServletRequest req) {
+		final StringTokenizer stokenzier = new StringTokenizer(req
+				.getPathInfo(), "/");
+		String[] tokens = new String[stokenzier.countTokens()];
+		int index = 0;
+		while (stokenzier.hasMoreTokens()) {
+			tokens[index] = stokenzier.nextToken();
+			logger.debug("path token: " + tokens[index]);
+			index++;
+		}
+		return tokens[0];
+	}
 
-    @Override
-    protected void doGet(final HttpServletRequest req,
-            final HttpServletResponse resp) throws ServletException,
-            IOException {
-        this.doPost(req, resp);
-    }
+	@Override
+	protected void doGet(final HttpServletRequest req,
+			final HttpServletResponse resp) throws ServletException,
+			IOException {
+		this.doPost(req, resp);
+	}
 }
