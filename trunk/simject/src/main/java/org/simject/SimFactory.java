@@ -173,10 +173,8 @@ public class SimFactory {
 					+ ">");
 		}
 
-		Object obj = HttpClientProxy.newInstance(Thread.currentThread()
+		return HttpClientProxy.newInstance(Thread.currentThread()
 				.getContextClassLoader(), new Class[] { clazz }, target);
-
-		return obj;
 	}
 
 	/**
