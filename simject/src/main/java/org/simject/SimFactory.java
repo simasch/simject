@@ -96,6 +96,11 @@ public class SimFactory {
 	 */
 	private void loadXmlConfig(final String fileName) {
 		try {
+			if (logger.isInfoEnabled()) {
+				logger.info("Loading configuration from <"
+						+ SimConstants.DEFAULT_DIRECTORY + fileName + ">");
+			}
+
 			final JAXBContext jcontext = JAXBContext
 					.newInstance("org.simject.jaxb");
 			final Unmarshaller unmarshaller = jcontext.createUnmarshaller();
@@ -163,9 +168,12 @@ public class SimFactory {
 	 */
 	private Object createHttpClientProxy(final Class<?> clazz,
 			final String target) throws MalformedURLException {
-		Object obj = null;
+		if (logger.isInfoEnabled()) {
+			logger.info("Creating <" + clazz.getName() + "> for URL <" + target
+					+ ">");
+		}
 
-		obj = HttpClientProxy.newInstance(Thread.currentThread()
+		Object obj = HttpClientProxy.newInstance(Thread.currentThread()
 				.getContextClassLoader(), new Class[] { clazz }, target);
 
 		return obj;
@@ -184,10 +192,18 @@ public class SimFactory {
 	private Object createPojo(final Resource resource, final Class<?> clazz)
 			throws InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
+
 		Object obj;
 		if (resource.getTarget() == null || resource.getTarget().equals("")) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Creating <" + resource.getType() + ">");
+			}
 			obj = createInstance(clazz);
 		} else {
+			if (logger.isInfoEnabled()) {
+				logger.info("Creating <" + resource.getType() + "> as <"
+						+ resource.getTarget() + ">");
+			}
 			final String realizedby = resource.getTarget();
 			final Class<?> realizedbyClazz = Class.forName(realizedby);
 			obj = createInstance(realizedbyClazz);
@@ -202,6 +218,10 @@ public class SimFactory {
 	 * @return
 	 */
 	private Object createEntityManager(final Resource resource) {
+
+		if (logger.isInfoEnabled()) {
+			logger.info("Creating <" + resource.getType() + ">");
+		}
 
 		final Map<String, String> props = new HashMap<String, String>();
 		for (Property property : resource.getProperty()) {
@@ -248,6 +268,13 @@ public class SimFactory {
 							final Object value = this.resourceMap.get(clazz);
 							field.setAccessible(true);
 							field.set(obj, value);
+							if (logger.isInfoEnabled()) {
+								logger.info("Injecting instance of <"
+										+ value.getClass().getName()
+										+ "> into field <" + field.getName()
+										+ "> in class <"
+										+ obj.getClass().getName() + ">");
+							}
 						}
 					}
 				}

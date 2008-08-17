@@ -78,6 +78,10 @@ public final class HttpClientProxy implements InvocationHandler {
 		final String urlString = target.substring(4);
 		final URL url = new URL(urlString);
 
+		if (logger.isInfoEnabled()) {
+			logger.info("Creating proxy for URL <" + url + "> using <"
+					+ protocol + "> protocol");
+		}
 		// Create an instance of the proxy
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
 				new HttpClientProxy(url, protocol));
@@ -96,6 +100,10 @@ public final class HttpClientProxy implements InvocationHandler {
 	@Override
 	public Object invoke(final Object proxy, final Method method,
 			final Object[] args) throws Throwable {
+		if (logger.isInfoEnabled()) {
+			logger.info("Invoking method <" + method.getName()
+					+ "> with arguments <" + args + ">");
+		}
 		Object result;
 		try {
 			if (protocol == Protocol.Binary) {
@@ -182,8 +190,6 @@ public final class HttpClientProxy implements InvocationHandler {
 
 		final HttpClient httpclient = new HttpClient();
 		httpclient.executeMethod(post);
-
-		logger.debug(post.getResponseBodyAsString());
 
 		// Get response if the content is > 0
 		Object result = null;
