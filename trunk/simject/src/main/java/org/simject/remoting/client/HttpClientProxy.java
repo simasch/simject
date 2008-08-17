@@ -36,7 +36,8 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * Used to provide remote access over HTTP to a resource. HttpClientProxy uses
- * Commons HTTPClient for communication and XStream for XML serialization
+ * Commons HttpClient for communication and XStream for XML serialization or
+ * normal Java serialization for binary protocol
  * 
  * @author Simon Martinelli
  */
@@ -56,7 +57,7 @@ public final class HttpClientProxy implements InvocationHandler {
 	final private Protocol protocol;
 
 	/**
-	 * Factory method
+	 * Creates a new instance of a proxy
 	 * 
 	 * @param loader
 	 * @param interfaces
@@ -207,7 +208,8 @@ public final class HttpClientProxy implements InvocationHandler {
 	}
 
 	/**
-	 * Creates a HttpClient PostMethod based on a byte[] and the content type
+	 * Creates a HttpClient PostMethod based on a byte[] and the given content
+	 * type
 	 * 
 	 * @param bytes
 	 * @param contentType

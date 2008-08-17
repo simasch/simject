@@ -37,7 +37,8 @@ import org.simject.util.SimConstants;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * Used to provide remote access over HTTP to a resource
+ * This servlet can be used as endpoint for remote access over HTTP to a
+ * resource
  * 
  * @author Simon Martinelli
  */

@@ -73,6 +73,7 @@ public class SimFactory {
 	 * javax.persistence.EntityManager a special treatment will occur
 	 * 
 	 * @param <T>
+	 *            type of resource
 	 * @param clazz
 	 *            must be the type configured in the config file
 	 * @return an instance of the desired type
@@ -148,14 +149,13 @@ public class SimFactory {
 			obj = this.createEntityManager(resource);
 		} else if (resource.getTarget() != null
 				&& resource.getTarget().contains("http://")) {
-			// target is an url
+			// target is URL
 			obj = this.createHttpClientProxy(clazz, resource.getTarget());
 		} else {
 			// any other will create a POJO instance
 			obj = this.createPojo(resource, clazz);
 		}
 		this.resourceMap.put(clazz, obj);
-
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class SimFactory {
 			throws InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
 
-		Object obj;
+		Object obj = null;
 		if (resource.getTarget() == null || resource.getTarget().equals("")) {
 			if (logger.isInfoEnabled()) {
 				logger.info("Creating <" + resource.getType() + ">");
