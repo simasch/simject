@@ -3,11 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://simject.org/xml/ns/resources http://simject.org/xml/ns/resources/resources_1_0.xsd"
 	version="1.0">
-	<resource type="org.simject.library.test.dummy.TestClass" />
-	<resource type="org.simject.library.test.dummy.TestInterface"
-		target="org.simject.library.test.dummy.TestInterfaceImpl" />
-	<resource type="org.simject.library.test.dummy.TestRemoteInterface"
-		target="xml:http://localhost:8080/demo/remote/org.simject.library.test.dummy.TestRemoteInterface" />
+	<resource type="org.simject.test.dummy.TestClass" />
+	<resource type="org.simject.test.dummy.TestInterface"
+		target="org.simject.test.dummy.TestImpl" />
+	<resource type="org.simject.test.dummy.TestRemoteInterface"
+		target="xml:http://localhost:8080/demo/remote/org.simject.test.dummy.TestRemoteInterface" />
 	<resource type="javax.persistence.EntityManager" name="org.simject.demo">
 		<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
 		<property name="hibernate.connection.username" value="root" />
