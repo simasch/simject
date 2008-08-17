@@ -134,6 +134,7 @@ public class SimServerServlet extends HttpServlet {
 		} catch (Exception e) {
 			// If an exception occurs during invocation put it in the result to
 			// have it serialized
+			logger.info("Exception occured during invocation", e);
 			result = e;
 		}
 		if (result != null) {
