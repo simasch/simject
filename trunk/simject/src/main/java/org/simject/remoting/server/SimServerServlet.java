@@ -106,10 +106,16 @@ public class SimServerServlet extends HttpServlet {
 			// get the method name from the HTTP header
 			final String methodString = req
 					.getHeader(SimConstants.PARAM_METHOD);
-			logger.debug("methodString: " + methodString);
+
 			// get the parameter types from the HTTP header
 			final String paramTypesString = req
 					.getHeader(SimConstants.PARAM_TYPES);
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Request for class <" + clazz.getName()
+						+ "> method <" + methodString + "> params <"
+						+ paramTypesString + ">");
+			}
 
 			if (paramTypesString == null) {
 				// method without parameters to invoke
@@ -123,9 +129,7 @@ public class SimServerServlet extends HttpServlet {
 				final Method method = obj.getClass().getMethod(methodString,
 						parameterTypes);
 
-				logger.debug("args: " + args);
 				result = method.invoke(obj, args);
-				logger.debug("result: " + result);
 			}
 		} catch (Exception e) {
 			// If an exception occurs during invocation put it in the result to
@@ -134,10 +138,8 @@ public class SimServerServlet extends HttpServlet {
 		}
 		if (result != null) {
 			if (req.getContentType().equals(Protocol.Xml.getContentType())) {
-				logger.debug(Protocol.Xml.getContentType());
 				this.sendXmlResponse(resp, result);
 			} else {
-				logger.debug(Protocol.Binary.getContentType());
 				this.sendBinaryResponse(resp, result);
 			}
 		}
@@ -194,7 +196,6 @@ public class SimServerServlet extends HttpServlet {
 			int index = 0;
 			while (stokenizer.hasMoreTokens()) {
 				final String className = stokenizer.nextToken();
-				logger.debug("parameterTyp: " + className);
 
 				final Class<?> clazz = Class.forName(className);
 				parameters[index] = clazz;
@@ -259,7 +260,6 @@ public class SimServerServlet extends HttpServlet {
 		int index = 0;
 		while (stokenzier.hasMoreTokens()) {
 			tokens[index] = stokenzier.nextToken();
-			logger.debug("path token: " + tokens[index]);
 			index++;
 		}
 		return tokens[0];
