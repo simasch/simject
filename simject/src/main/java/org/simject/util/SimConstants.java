@@ -22,11 +22,25 @@ package org.simject.util;
  */
 public final class SimConstants {
 
+	/**
+	 * The default directory where the resource.xml should be stored
+	 */
 	public final static String DEFAULT_DIRECTORY = "META-INF/";
 
+	/**
+	 * Used in HTTP communication to define the method in the HTTP header
+	 */
 	public final static String PARAM_METHOD = "method";
 
+	/**
+	 * Used in HTTP communication to define the method parameter types in the
+	 * HTTP header
+	 */
 	public final static String PARAM_TYPES = "types";
 
+	/**
+	 * Used in HTTP communication to define the delimiters used to separate the
+	 * parameter types in the HTTP header
+	 */
 	public final static String PARAM_TYPE_DELIM = ",";
 }
