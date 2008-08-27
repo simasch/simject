@@ -82,7 +82,7 @@ Moving the properties to the resource config file will simplify the use of this 
 
 = Remoting =
 
-Remoting in simject is straigt forwared as well. simject uses Jakarta Commons HttpClient for communication over HTTP.
+Remoting in simject is straight forwared as well. 
 
 == Client ==
 On the client side you have to define the URL of the server resource:
@@ -92,7 +92,7 @@ On the client side you have to define the URL of the server resource:
 }}}
 
 === Protocol ===
-By adding either xml: or bin: you can choose between XML or Java serialization. simject uses XStream as XML serializer.
+By adding either xml: or bin: you can choose between XML or binary serialization. 
 
 After this prefix http://localhost:8080/simject-demo-server/remote defines the servlet listening to the requests and /org.simject.demo.service.EmployeeService ist simply the type of the requested resource.
 
