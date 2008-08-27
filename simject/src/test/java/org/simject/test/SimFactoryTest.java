@@ -20,13 +20,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Proxy;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.simject.SimFactory;
-import org.simject.remoting.client.HttpClientProxy;
 import org.simject.test.dummy.TestClass;
 import org.simject.test.dummy.TestImpl;
 import org.simject.test.dummy.TestInterface;
@@ -45,7 +44,8 @@ public class SimFactoryTest {
 	 */
 	private static final String RESOURCES_XML = "test_resources.xml";
 
-	private static final Logger logger = Logger.getLogger(SimFactoryTest.class);
+	private static final Logger logger = Logger.getLogger(SimFactoryTest.class
+			.toString());
 
 	/**
 	 * Positive test using a class

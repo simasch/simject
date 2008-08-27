@@ -22,6 +22,8 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -29,7 +31,6 @@ import javax.persistence.Persistence;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.log4j.Logger;
 import org.simject.exception.SimConfigException;
 import org.simject.exception.SimResourceNotFoundException;
 import org.simject.jaxb.Property;
@@ -47,7 +48,8 @@ import org.simject.util.SimConstants;
  */
 public class SimFactory {
 
-	private static final Logger logger = Logger.getLogger(SimFactory.class);
+	private static final Logger logger = Logger.getLogger(SimFactory.class
+			.getName());
 
 	/**
 	 * Container holding all configured resources
@@ -84,7 +86,7 @@ public class SimFactory {
 		if (obj == null) {
 			final String message = "Resource of type " + clazz.getName()
 					+ " not found";
-			logger.fatal(message);
+			logger.severe(message);
 			throw new SimResourceNotFoundException(message);
 		}
 		return (T) obj;
@@ -97,10 +99,8 @@ public class SimFactory {
 	 */
 	private void loadXmlConfig(final String fileName) {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info("Loading configuration from <"
-						+ SimConstants.DEFAULT_DIRECTORY + fileName + ">");
-			}
+			logger.info("Loading configuration from <"
+					+ SimConstants.DEFAULT_DIRECTORY + fileName + ">");
 
 			final JAXBContext jcontext = JAXBContext
 					.newInstance("org.simject.jaxb");
@@ -121,7 +121,7 @@ public class SimFactory {
 				}
 			}
 		} catch (Exception e) {
-			logger.fatal(e);
+			logger.log(Level.SEVERE, e.getMessage(), e);
 			throw new SimConfigException(e.getMessage(), e);
 		}
 	}
@@ -168,10 +168,8 @@ public class SimFactory {
 	 */
 	private Object createHttpClientProxy(final Class<?> clazz,
 			final String target) throws MalformedURLException {
-		if (logger.isInfoEnabled()) {
-			logger.info("Creating <" + clazz.getName() + "> for URL <" + target
-					+ ">");
-		}
+		logger.info("Creating <" + clazz.getName() + "> for URL <" + target
+				+ ">");
 
 		return HttpClientProxy.newInstance(Thread.currentThread()
 				.getContextClassLoader(), new Class[] { clazz }, target);
@@ -193,15 +191,11 @@ public class SimFactory {
 
 		Object obj = null;
 		if (resource.getTarget() == null || resource.getTarget().equals("")) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Creating <" + resource.getType() + ">");
-			}
+			logger.info("Creating <" + resource.getType() + ">");
 			obj = createInstance(clazz);
 		} else {
-			if (logger.isInfoEnabled()) {
-				logger.info("Creating <" + resource.getType() + "> as <"
-						+ resource.getTarget() + ">");
-			}
+			logger.info("Creating <" + resource.getType() + "> as <"
+					+ resource.getTarget() + ">");
 			final String realizedby = resource.getTarget();
 			final Class<?> realizedbyClazz = Class.forName(realizedby);
 			obj = createInstance(realizedbyClazz);
@@ -217,9 +211,7 @@ public class SimFactory {
 	 */
 	private Object createEntityManager(final Resource resource) {
 
-		if (logger.isInfoEnabled()) {
-			logger.info("Creating <" + resource.getType() + ">");
-		}
+		logger.info("Creating <" + resource.getType() + ">");
 
 		final Map<String, String> props = new HashMap<String, String>();
 		for (Property property : resource.getProperty()) {
@@ -266,19 +258,17 @@ public class SimFactory {
 							final Object value = this.resourceMap.get(clazz);
 							field.setAccessible(true);
 							field.set(obj, value);
-							if (logger.isInfoEnabled()) {
-								logger.info("Injecting instance of <"
-										+ value.getClass().getName()
-										+ "> into field <" + field.getName()
-										+ "> in class <"
-										+ obj.getClass().getName() + ">");
-							}
+							logger.info("Injecting instance of <"
+									+ value.getClass().getName()
+									+ "> into field <" + field.getName()
+									+ "> in class <" + obj.getClass().getName()
+									+ ">");
 						}
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.fatal(e);
+			logger.log(Level.SEVERE, e.getMessage(), e);
 			throw new SimConfigException(
 					"Unable to inject dependencies. Please check the configuration",
 					e);
