@@ -5,6 +5,11 @@
 		<author email="simon@martinelli.ch">Simon Martinelli</author>
 	</properties>
 	<body>
+		<release version="1.4.0" date="" description="Commons HttpClient removed">
+			<action dev="simon.martinelli" type="add">To avoid unnecessary
+				dependencies HttpUrlConnection is used instead of Commons HttpClient
+			</action>
+		</release>
 		<release version="1.3.0" date="" description="Added logging info">
 			<action dev="simon.martinelli" type="add">startup and
 				configuration messages are logged on info level</action>
