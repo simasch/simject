@@ -15,19 +15,15 @@
  */
 package org.simject.remoting.client;
 
-import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.log4j.Logger;
 import org.simject.util.Protocol;
 import org.simject.util.SimConstants;
@@ -36,8 +32,8 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * Used to provide remote access over HTTP to a resource. HttpClientProxy uses
- * Commons HttpClient for communication and XStream for XML serialization or
- * normal Java serialization for binary protocol
+ * XStream for XML serialization or normal Java serialization for binary
+ * protocol
  * 
  * @author Simon Martinelli
  */
@@ -108,9 +104,9 @@ public final class HttpClientProxy implements InvocationHandler {
 		Object result;
 		try {
 			if (protocol == Protocol.Binary) {
-				result = this.invokeUrlBinary(method, args);
+				result = this.invokeUrlBinary2(method, args);
 			} else {
-				result = this.invokeUrlXml(method, args);
+				result = this.invokeUrlXml2(method, args);
 			}
 		} catch (Exception e) {
 			logger.fatal(e);
@@ -131,28 +127,25 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @return
 	 * @throws Throwable
 	 */
-	private Object invokeUrlBinary(final Method method, final Object[] args)
+	private Object invokeUrlBinary2(final Method method, final Object[] args)
 			throws Throwable {
 
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		final ObjectOutputStream oos = new ObjectOutputStream(baos);
+		HttpURLConnection con = (HttpURLConnection) this.url.openConnection();
+		con.setDoOutput(true);
+
+		// The method name and the parameter types are set to the header
+		this.createHeader2(method, con);
+
+		final ObjectOutputStream oos = new ObjectOutputStream(con
+				.getOutputStream());
 		oos.writeObject(args);
 		oos.close();
 
-		final PostMethod post = this.createPostMethod(baos.toByteArray(),
-				Protocol.Binary.getContentType());
-
-		// The method name and the parameter types are set to the header
-		this.createHeader(method, post);
-
-		final HttpClient httpclient = new HttpClient();
-		httpclient.executeMethod(post);
-
 		// Get response if the content is > 0
 		Object result = null;
-		if (post.getResponseContentLength() > 0) {
-			final ObjectInputStream ois = new ObjectInputStream(post
-					.getResponseBodyAsStream());
+		if (con.getContentLength() > 0) {
+			final ObjectInputStream ois = new ObjectInputStream(con
+					.getInputStream());
 			result = ois.readObject();
 
 			if (result instanceof Throwable) {
@@ -160,7 +153,7 @@ public final class HttpClientProxy implements InvocationHandler {
 			}
 		}
 
-		post.releaseConnection();
+		con.disconnect();
 
 		return result;
 	}
@@ -177,50 +170,36 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @return
 	 * @throws Throwable
 	 */
-	private Object invokeUrlXml(final Method method, final Object[] args)
+	private Object invokeUrlXml2(final Method method, final Object[] args)
 			throws Throwable {
 
 		final XStream xstream = new XStream();
 		final String xml = xstream.toXML(args);
 
-		final PostMethod post = this.createPostMethod(xml.getBytes(),
-				Protocol.Xml.getContentType());
+		final HttpURLConnection con = (HttpURLConnection) this.url
+				.openConnection();
+		con.setDoOutput(true);
 
 		// The method name and the parameter types are set to the header
-		this.createHeader(method, post);
+		this.createHeader2(method, con);
 
-		final HttpClient httpclient = new HttpClient();
-		httpclient.executeMethod(post);
+		final OutputStreamWriter osw = new OutputStreamWriter(con
+				.getOutputStream());
+		osw.write(xml);
 
 		// Get response if the content is > 0
 		Object result = null;
-		if (post.getResponseContentLength() > 0) {
-			final String response = post.getResponseBodyAsString();
+		if (con.getContentLength() > 0) {
+			final String response = con.getInputStream().toString();
 			result = xstream.fromXML(response);
 			if (result instanceof Throwable) {
 				throw ((Throwable) result);
 			}
 		}
 
-		post.releaseConnection();
+		con.disconnect();
 
 		return result;
-	}
-
-	/**
-	 * Creates a HttpClient PostMethod based on a byte[] and the given content
-	 * type
-	 * 
-	 * @param bytes
-	 * @param contentType
-	 * @return
-	 */
-	private PostMethod createPostMethod(final byte[] bytes,
-			final String contentType) {
-		final PostMethod post = new PostMethod(this.url.toString());
-		final RequestEntity req = new ByteArrayRequestEntity(bytes, contentType);
-		post.setRequestEntity(req);
-		return post;
 	}
 
 	/**
@@ -229,10 +208,8 @@ public final class HttpClientProxy implements InvocationHandler {
 	 * @param method
 	 * @param post
 	 */
-	private void createHeader(final Method method, final PostMethod post) {
-		final Header headerMethod = new Header(SimConstants.PARAM_METHOD,
-				method.getName());
-		post.addRequestHeader(headerMethod);
+	private void createHeader2(final Method method, final HttpURLConnection con) {
+		con.setRequestProperty(SimConstants.PARAM_METHOD, method.getName());
 
 		// Get all parameter types and add them to a string delimited by ,
 		final StringBuffer params = new StringBuffer();
@@ -243,9 +220,7 @@ public final class HttpClientProxy implements InvocationHandler {
 		}
 		if (params.length() > 0) {
 			final String parameters = params.toString();
-			final Header headerParamTypes = new Header(
-					SimConstants.PARAM_TYPES, parameters);
-			post.addRequestHeader(headerParamTypes);
+			con.setRequestProperty(SimConstants.PARAM_TYPES, parameters);
 		}
 	}
 }
