@@ -126,7 +126,7 @@ public final class HttpClientProxy implements InvocationHandler {
 	private Object invokeUrlBinary2(final Method method, final Object[] args)
 			throws Throwable {
 
-		HttpURLConnection con = (HttpURLConnection) this.url.openConnection();
+		final HttpURLConnection con = (HttpURLConnection) this.url.openConnection();
 		con.setDoOutput(true);
 
 		// The method name and the parameter types are set to the header
