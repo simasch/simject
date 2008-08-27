@@ -15,25 +15,26 @@
  */
 package org.simject.remoting.server;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.simject.SimFactory;
 import org.simject.util.Protocol;
 import org.simject.util.SimConstants;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * This servlet can be used as endpoint for remote access over HTTP to a
@@ -45,7 +46,7 @@ import com.thoughtworks.xstream.XStream;
 public class SimServerServlet extends HttpServlet {
 
 	private final static Logger logger = Logger
-			.getLogger(SimServerServlet.class);
+			.getLogger(SimServerServlet.class.getName());
 
 	/**
 	 * Context parameter that contains the configuration file location
@@ -111,11 +112,8 @@ public class SimServerServlet extends HttpServlet {
 			final String paramTypesString = req
 					.getHeader(SimConstants.PARAM_TYPES);
 
-			if (logger.isInfoEnabled()) {
-				logger.info("Request for class <" + clazz.getName()
-						+ "> method <" + methodString + "> params <"
-						+ paramTypesString + ">");
-			}
+			logger.info("Request for class <" + clazz.getName() + "> method <"
+					+ methodString + "> params <" + paramTypesString + ">");
 
 			if (paramTypesString == null) {
 				// method without parameters to invoke
@@ -134,7 +132,7 @@ public class SimServerServlet extends HttpServlet {
 		} catch (Exception e) {
 			// If an exception occurs during invocation put it in the result to
 			// have it serialized
-			logger.info("Exception occured during invocation", e);
+			logger.log(Level.INFO, "Exception occured during invocation", e);
 			result = e;
 		}
 		if (result != null) {
@@ -174,9 +172,8 @@ public class SimServerServlet extends HttpServlet {
 	private void sendXmlResponse(final HttpServletResponse resp,
 			final Object result) throws IOException {
 		resp.setContentType(Protocol.Xml.getContentType());
-		final XStream xstream = new XStream();
-		final String xml = xstream.toXML(result);
-		resp.getWriter().write(xml);
+		final XMLEncoder encoder = new XMLEncoder(resp.getOutputStream());
+		encoder.writeObject(result);
 	}
 
 	/**
@@ -207,7 +204,7 @@ public class SimServerServlet extends HttpServlet {
 	}
 
 	/**
-	 * Uses XStream to convert XML to Object
+	 * Get Arguments
 	 * 
 	 * @param req
 	 * @return
@@ -219,9 +216,8 @@ public class SimServerServlet extends HttpServlet {
 
 		Object args = null;
 		if (req.getContentType().equals(Protocol.Xml.getContentType())) {
-			final String xml = this.inputStreamToString(req.getInputStream());
-			final XStream xstream = new XStream();
-			args = xstream.fromXML(xml);
+			final XMLDecoder decoder = new XMLDecoder(req.getInputStream());
+			args = decoder.readObject();
 		} else {
 			final ObjectInputStream ois = new ObjectInputStream(req
 					.getInputStream());
@@ -229,23 +225,6 @@ public class SimServerServlet extends HttpServlet {
 		}
 
 		return (Object[]) args;
-	}
-
-	/**
-	 * Helper Method to convert InputStream to String
-	 * 
-	 * @param in
-	 * @return
-	 * @throws IOException
-	 */
-	private String inputStreamToString(final InputStream istream)
-			throws IOException {
-		final StringBuffer out = new StringBuffer();
-		final byte[] bytes = new byte[4096];
-		for (int n; (n = istream.read(bytes)) != -1;) {
-			out.append(new String(bytes, 0, n)); // NOPMD
-		}
-		return out.toString();
 	}
 
 	/**

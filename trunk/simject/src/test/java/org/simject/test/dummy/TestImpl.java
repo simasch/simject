@@ -1,13 +1,13 @@
 package org.simject.test.dummy;
 
-import javax.annotation.Resource;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
+import javax.annotation.Resource;
 
 public class TestImpl implements TestInterface {
 
-	private final static Logger logger = Logger
-			.getLogger(TestImpl.class);
+	private final static Logger logger = Logger.getLogger(TestImpl.class
+			.getName());
 
 	@Resource
 	private TestClass testClass;

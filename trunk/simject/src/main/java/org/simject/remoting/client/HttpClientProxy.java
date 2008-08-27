@@ -15,20 +15,20 @@
  */
 package org.simject.remoting.client;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.simject.util.Protocol;
 import org.simject.util.SimConstants;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Used to provide remote access over HTTP to a resource. HttpClientProxy uses
@@ -39,8 +39,8 @@ import com.thoughtworks.xstream.XStream;
  */
 public final class HttpClientProxy implements InvocationHandler {
 
-	private final static Logger logger = Logger
-			.getLogger(HttpClientProxy.class);
+	private final static Logger logger = Logger.getLogger(HttpClientProxy.class
+			.getName());
 
 	/**
 	 * Holds the requested URL
@@ -75,10 +75,8 @@ public final class HttpClientProxy implements InvocationHandler {
 		final String urlString = target.substring(4);
 		final URL url = new URL(urlString);
 
-		if (logger.isInfoEnabled()) {
-			logger.info("Creating proxy for URL <" + url + "> using <"
-					+ protocol + "> protocol");
-		}
+		logger.info("Creating proxy for URL <" + url + "> using <" + protocol
+				+ "> protocol");
 		// Create an instance of the proxy
 		return java.lang.reflect.Proxy.newProxyInstance(loader, interfaces,
 				new HttpClientProxy(url, protocol));
@@ -97,10 +95,8 @@ public final class HttpClientProxy implements InvocationHandler {
 	@Override
 	public Object invoke(final Object proxy, final Method method,
 			final Object[] args) throws Throwable {
-		if (logger.isInfoEnabled()) {
-			logger.info("Invoking method <" + method.getName()
-					+ "> with arguments <" + args + ">");
-		}
+		logger.info("Invoking method <" + method.getName()
+				+ "> with arguments <" + args + ">");
 		Object result;
 		try {
 			if (protocol == Protocol.Binary) {
@@ -109,7 +105,7 @@ public final class HttpClientProxy implements InvocationHandler {
 				result = this.invokeUrlXml2(method, args);
 			}
 		} catch (Exception e) {
-			logger.fatal(e);
+			logger.log(Level.SEVERE, e.getMessage(), e);
 			throw e;
 		}
 		return result;
@@ -161,9 +157,9 @@ public final class HttpClientProxy implements InvocationHandler {
 	/**
 	 * Synchronous call over HTTP using XML protocol
 	 * 
-	 * 1. Serializes the arguments to XML using XStream and make a remote call
-	 * over HTTP with Commons HttpClient to the desired method. 2. Deserializes
-	 * the XML response from the server.
+	 * 1. Serializes the arguments to XML using XMLEncoder and make a remote
+	 * call over HTTP with Commons HttpClient to the desired method. 2.
+	 * Deserializes the XML response from the server using XMLDecoder.
 	 * 
 	 * @param method
 	 * @param args
@@ -173,9 +169,6 @@ public final class HttpClientProxy implements InvocationHandler {
 	private Object invokeUrlXml2(final Method method, final Object[] args)
 			throws Throwable {
 
-		final XStream xstream = new XStream();
-		final String xml = xstream.toXML(args);
-
 		final HttpURLConnection con = (HttpURLConnection) this.url
 				.openConnection();
 		con.setDoOutput(true);
@@ -183,15 +176,14 @@ public final class HttpClientProxy implements InvocationHandler {
 		// The method name and the parameter types are set to the header
 		this.createHeader2(method, con);
 
-		final OutputStreamWriter osw = new OutputStreamWriter(con
-				.getOutputStream());
-		osw.write(xml);
+		final XMLEncoder encoder = new XMLEncoder(con.getOutputStream());
+		encoder.writeObject(args);
 
 		// Get response if the content is > 0
 		Object result = null;
 		if (con.getContentLength() > 0) {
-			final String response = con.getInputStream().toString();
-			result = xstream.fromXML(response);
+			final XMLDecoder decoder = new XMLDecoder(con.getInputStream());
+			result = decoder.readObject();
 			if (result instanceof Throwable) {
 				throw ((Throwable) result);
 			}
