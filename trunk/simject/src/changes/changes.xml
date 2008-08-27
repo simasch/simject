@@ -5,16 +5,13 @@
 		<author email="simon@martinelli.ch">Simon Martinelli</author>
 	</properties>
 	<body>
-		<release version="1.4.0" date=""
-			description="unecessary dependencies removed">
+		<release version="1.3.0" date="2008-08-27" description="Added logging info and cleaned up dependencies">
+			<action dev="simon.martinelli" type="add">startup and
+				configuration messages are logged on info level</action>
 			<action dev="simon.martinelli" type="add">To avoid unnecessary
 				dependencies HttpUrlConnection is used instead of Commons
 				HttpClient, XMLEncoder and XMLDecoder instead of XStream and Java
 				Loging instead of Log4j</action>
-		</release>
-		<release version="1.3.0" date="" description="Added logging info">
-			<action dev="simon.martinelli" type="add">startup and
-				configuration messages are logged on info level</action>
 		</release>
 		<release version="1.2.0" date="2008-08-04"
 			description="Remoting Exception handling improved">
