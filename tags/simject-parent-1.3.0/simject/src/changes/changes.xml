@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+	<properties>
+		<title>simject</title>
+		<author email="simon@martinelli.ch">Simon Martinelli</author>
+	</properties>
+	<body>
+		<release version="1.3.0" date="2008-08-27" description="Added logging info and cleaned up dependencies">
+			<action dev="simon.martinelli" type="add">startup and
+				configuration messages are logged on info level</action>
+			<action dev="simon.martinelli" type="add">To avoid unnecessary
+				dependencies HttpUrlConnection is used instead of Commons
+				HttpClient, XMLEncoder and XMLDecoder instead of XStream and Java
+				Loging instead of Log4j</action>
+		</release>
+		<release version="1.2.0" date="2008-08-04"
+			description="Remoting Exception handling improved">
+			<action dev="simon.martinelli" type="update">Refactoring in
+				remoting classes</action>
+			<action dev="simon.martinelli" type="update">Fixed PMD violations
+			</action>
+			<action dev="simon.martinelli" type="update">Moved content type
+				from SimConstants to enum Protocol</action>
+			<action dev="simon.martinelli" type="update">When an exception
+				occurs during method invocation on the server side, the exception is
+				serialized as result and rethrown on client side</action>
+		</release>
+		<release version="1.1.0" date="2008-08-01" description="Binary protocol">
+			<action dev="simon.martinelli" type="update">One can choose between
+				XML and binary protocol</action>
+		</release>
+		<release version="1.0.5" date="2008-07-31" description="Essentail refactoring">
+			<action dev="simon.martinelli" type="update">simject maven
+				project complete self contained</action>
+			<action dev="simon.martinelli" type="update">simject-factory
+				project renamed to simject</action>
+			<action dev="simon.martinelli" type="update">simject-parent
+				project renamed to simject-demo-parent</action>
+		</release>
+		<release version="1.0.0" date="2008-07-30" description="First version">
+			<action dev="simon.martinelli" type="add">First release of
+				simject</action>
+		</release>
+	</body>
+</document>

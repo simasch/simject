@@ -1,0 +1,54 @@
+If you are looking for a simple IOC container with JPA and remoting support - try simject!
+
+* Preface
+
+  During my private studies on dependency injection (DI), dynamic proxy, remoting, Maven2 and JPA I started to create a small very simple dependency injection framework with some basic features.  I then decided to make it available for every one - maybe someone can use it.
+
+  I named it simject: SIMple (or SIMons;-) dependency inJECTion. The main goal is to provide DI support in Batch or FatClient applications. In Java EE applications I recommend the use of EJB3 DI. simject has some basic features that I need in my every day work and it is, compared with complex full featured DI frameworks, very easy to use.
+  
+  simject is using only Java standard classes and does not depend on any third party library or framework. Therefore it can be used in any environment.
+
+  Below you will find a short introduction with some basic information. 
+  There is also a more comprehensive examples in the {{{http://code.google.com/p/simject/wiki/UsersGuide}UsersGuide}}. The hole example is available in the {{{http://code.google.com/p/simject/source/checkout}Subversion repository}}.\
+  simject is available for download in the {{{http://code.google.com/p/simject/downloads/list}Downloads section}}.
+
+  Have fun!
+
+* Quick Start
+
+  simject uses the JSR 250 @Resource annotation for configuring the dependency injection.
+
+---
+@Resource
+private EmployeeManager employeeManager;
+---
+
+  Then it needs a little XML configuration:
+
+---
+<resources xmlns="http://simject.org/xml/ns/resources"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://simject.org/xml/ns/resources 
+  http://simject.org/xml/ns/resources/resources_1_0.xsd" version="1.0">
+
+  <resource type="org.simject.demo.business.EmployeeManager" />
+
+</resources>
+---
+
+  The usage is extremly simple as well:
+
+---
+SimFactory factory = new SimFactory("resources.xml");
+EmployeeService service = factory.getResource(EmployeeService.class);
+---
+
+  Check the UsersGuide for more information.
+
+* Current features
+
+  * POJO injection
+  
+  * JPA EntityManager injection and configuration
+  
+  * Client/Server communication over HTTP
