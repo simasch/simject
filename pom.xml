@@ -26,14 +26,6 @@
 		<module>simject-demo-client</module>
 		<module>simject-demo-server</module>
 	</modules>
-	<repositories>
-		<repository>
-			<id>java.net</id>
-			<url>https://maven-repository.dev.java.net/nonav/repository 
-			</url>
-			<layout>legacy</layout>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
