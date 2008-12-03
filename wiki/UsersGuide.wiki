@@ -11,7 +11,7 @@ private EmployeeManager employeeManager;
 }}}
 
 == XML Configuration ==
-There is only little XML Configuration needed. The file must be placed in the META-INF directory!
+There is only little XML Configuration needed. The file must be placed in the META-INF directory! For example resources.xml
 {{{
 <resources xmlns="http://simject.org/xml/ns/resources"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -31,6 +31,7 @@ type specifies the class or interface of the resource. If it is an interface you
 
 To use the configured resources you need the central class in simject: the SimFactory:
 {{{
+SimFactory factory = new SimFactory("resources.xml");
 EmployeeService service = factory.getResource(EmployeeService.class);
 Employee employee = new Employee();
 employee.setName("Simon Martinelli");
