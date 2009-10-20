@@ -9,12 +9,12 @@
 	<resource type="org.simject.test.dummy.TestRemoteInterface"
 		target="xml:http://localhost:8080/demo/remote/org.simject.test.dummy.TestRemoteInterface" />
 	<resource type="javax.persistence.EntityManager" name="org.simject.demo">
-		<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-		<property name="hibernate.connection.username" value="root" />
-		<property name="hibernate.connection.password" value="root" />
-		<property name="hibernate.connection.url" value="jdbc:mysql://localhost/demo" />
+		<property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver" />
+		<property name="hibernate.connection.username" value="sa" />
+		<property name="hibernate.connection.password" value="" />
+		<property name="hibernate.connection.url" value="jdbc:hsqldb:mem:test" />
 		<property name="hibernate.format_sql" value="true" />
-		<property name="dialect" value="org.hibernate.dialect.MySQLDialect" />
+		<!-- property name="dialect" value="org.hibernate.dialect.MySQLDialect" / -->
 		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 	</resource>
 </resources>
